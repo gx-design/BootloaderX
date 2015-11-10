@@ -1,0 +1,18 @@
+[submodule "STM32F4Cube"]
+	path = STM32F4Cube
+	url = git@gitlab.com:GXDesign/STM32F4Cube.git
+[submodule "ArmSystem"]
+	path = ArmSystem
+	url = git@gitlab.com:GXDesign/ArmSystem.git
+[submodule "CommonHal"]
+	path = CommonHal
+	url = git@gitlab.com:GXDesign/CommonHal.git
+[submodule "GxInstrumentationHidDevice"]
+	path = GxInstrumentationHidDevice
+	url = git@gitlab.com:GXDesign/GxInstrumentationHidDevice.git
+[submodule "IntegratedDebugProtocol"]
+	path = IntegratedDebugProtocol
+	url = git@gitlab.com:GXDesign/IntegratedDebugProtocol.git
+[submodule "STM32HalPlatform"]
+	path = STM32HalPlatform
+	url = git@gitlab.com:GXDesign/STM32HalPlatform.git
