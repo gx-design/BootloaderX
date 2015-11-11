@@ -1,21 +1,21 @@
 [submodule "STM32F4Cube"]
 	path = STM32F4Cube
-	url = git@gitlab.com:GXDesign/STM32F4Cube.git
+	url = git@gxgroup.duia.eu:gx/STM32F4Cube.git
 [submodule "ArmSystem"]
 	path = ArmSystem
-	url = git@gitlab.com:GXDesign/ArmSystem.git
+	url = git@gxgroup.duia.eu:gx/ArmSystem.git
 [submodule "CommonHal"]
 	path = CommonHal
-	url = git@gitlab.com:GXDesign/CommonHal.git
+	url = git@gxgroup.duia.eu:gx/CommonHal.git
 [submodule "GxInstrumentationHidDevice"]
 	path = GxInstrumentationHidDevice
-	url = git@gitlab.com:GXDesign/GxInstrumentationHidDevice.git
+	url = git@gxgroup.duia.eu:gx/GxInstrumentationHidDevice.git
 [submodule "IntegratedDebugProtocol"]
 	path = IntegratedDebugProtocol
-	url = git@gitlab.com:GXDesign/IntegratedDebugProtocol.git
+	url = git@gxgroup.duia.eu:gx/IntegratedDebugProtocol.git
 [submodule "STM32HalPlatform"]
 	path = STM32HalPlatform
-	url = git@gitlab.com:GXDesign/STM32HalPlatform.git
+	url = git@gxgroup.duia.eu:gx/STM32HalPlatform.git
 [submodule "Utils"]
 	path = Utils
-	url = git@gitlab.com:GXDesign/Utils.git
+	url = git@gxgroup.duia.eu:gx/Utils.git
