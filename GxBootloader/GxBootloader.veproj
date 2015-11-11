@@ -3,8 +3,36 @@
   <Id>94667c5e-21de-4f1d-9b02-cc04b4df0138</Id>
   <ParentId>d8890adf-38b1-4221-914a-d3ea8b563e54</ParentId>
   <LocationRelativeToParent>GxBootloader\GxBootloader.veproj</LocationRelativeToParent>
-  <Children />
-  <ExportedIncludes />
+  <Children>
+    <ProjectItem xsi:type="ProjectFile">
+      <Id>b9d6516f-f21f-450d-b043-6e646e9fabfc</Id>
+      <ParentId>94667c5e-21de-4f1d-9b02-cc04b4df0138</ParentId>
+      <LocationRelativeToParent>GxBootloader.cpp</LocationRelativeToParent>
+    </ProjectItem>
+    <ProjectItem xsi:type="ProjectFile">
+      <Id>97982183-0112-4021-b8ea-19eea56865d9</Id>
+      <ParentId>94667c5e-21de-4f1d-9b02-cc04b4df0138</ParentId>
+      <LocationRelativeToParent>GxBootloader.h</LocationRelativeToParent>
+    </ProjectItem>
+    <ProjectItem xsi:type="ProjectFile">
+      <Id>a41c9fb2-cd52-4e45-bca1-bbcc81854132</Id>
+      <ParentId>94667c5e-21de-4f1d-9b02-cc04b4df0138</ParentId>
+      <LocationRelativeToParent>GxBootloaderHidDevice.cpp</LocationRelativeToParent>
+    </ProjectItem>
+    <ProjectItem xsi:type="ProjectFile">
+      <Id>02f0577a-0fb5-43e3-a014-955e6bd8a650</Id>
+      <ParentId>94667c5e-21de-4f1d-9b02-cc04b4df0138</ParentId>
+      <LocationRelativeToParent>GxBootloaderHidDevice.h</LocationRelativeToParent>
+    </ProjectItem>
+    <ProjectItem xsi:type="ProjectFile">
+      <Id>196e7f6d-593d-411f-935f-450ad470ca3b</Id>
+      <ParentId>94667c5e-21de-4f1d-9b02-cc04b4df0138</ParentId>
+      <LocationRelativeToParent>IBoard.h</LocationRelativeToParent>
+    </ProjectItem>
+  </Children>
+  <ExportedIncludes>
+    <string>GxBootloader</string>
+  </ExportedIncludes>
   <Configurations>
     <ProjectConfiguration>
       <Name>Default</Name>
@@ -39,5 +67,9 @@
       <IsLibrary>true</IsLibrary>
     </ProjectConfiguration>
   </Configurations>
-  <References />
+  <References>
+    <string>IntegratedDebugProtocol\IntegratedDebugProtocol.veproj</string>
+    <string>Utils\Utils.veproj</string>
+    <string>GxInstrumentationHidDevice\GxInstrumentationHidDevice.veproj</string>
+  </References>
 </Project>
