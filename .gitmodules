@@ -16,3 +16,6 @@
 [submodule "STM32HalPlatform"]
 	path = STM32HalPlatform
 	url = git@gitlab.com:GXDesign/STM32HalPlatform.git
+[submodule "Utils"]
+	path = Utils
+	url = git@gitlab.com:GXDesign/Utils.git
