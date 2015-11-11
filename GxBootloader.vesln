@@ -4,12 +4,59 @@
   <ParentId>00000000-0000-0000-0000-000000000000</ParentId>
   <Name>GxBootloader</Name>
   <FileName>GxBootloader</FileName>
-  <DefaultProjectIndex>0</DefaultProjectIndex>
+  <DefaultProjectIndex>1</DefaultProjectIndex>
   <UnloadedChildren>
     <Item xsi:type="UnloadedProject">
       <Id>94667c5e-21de-4f1d-9b02-cc04b4df0138</Id>
       <ParentId>d8890adf-38b1-4221-914a-d3ea8b563e54</ParentId>
       <FileName>GxBootloader\GxBootloader.veproj</FileName>
+    </Item>
+    <Item xsi:type="UnloadedProject">
+      <Id>83c5b1e7-a8c0-4bd4-830a-0a865e0a6940</Id>
+      <ParentId>d8890adf-38b1-4221-914a-d3ea8b563e54</ParentId>
+      <FileName>STM32DiscoveryBootloader\STM32DiscoveryBootloader.veproj</FileName>
+    </Item>
+    <Item xsi:type="UnloadedProject">
+      <Id>ff75663c-3e46-4918-8f88-5432a75d5a2f</Id>
+      <ParentId>7258998c-60b8-47e2-8829-f83898ca8b4a</ParentId>
+      <FileName>STM32HalPlatform\STM32HalPlatform.veproj</FileName>
+    </Item>
+    <Item xsi:type="UnloadedProject">
+      <Id>7b909844-93b7-4641-a498-952a460b33d0</Id>
+      <ParentId>7258998c-60b8-47e2-8829-f83898ca8b4a</ParentId>
+      <FileName>STM32F4Cube\STM32F4Cube.veproj</FileName>
+    </Item>
+    <Item xsi:type="UnloadedProject">
+      <Id>25e5210b-569e-414a-bdf3-86a5b5c323cb</Id>
+      <ParentId>7258998c-60b8-47e2-8829-f83898ca8b4a</ParentId>
+      <FileName>IntegratedDebugProtocol\IntegratedDebugProtocol.veproj</FileName>
+    </Item>
+    <Item xsi:type="UnloadedProject">
+      <Id>542834a7-6aac-4b81-bf21-fd2afd103965</Id>
+      <ParentId>7258998c-60b8-47e2-8829-f83898ca8b4a</ParentId>
+      <FileName>CommonHal\CommonHal.veproj</FileName>
+    </Item>
+    <Item xsi:type="UnloadedProject">
+      <Id>e1721902-d308-4284-9e70-80840dc96186</Id>
+      <ParentId>7258998c-60b8-47e2-8829-f83898ca8b4a</ParentId>
+      <FileName>ArmSystem\ArmSystem.veproj</FileName>
+    </Item>
+    <Item xsi:type="UnloadedProject">
+      <Id>d79b5123-e992-4c1e-8280-2070f476649c</Id>
+      <ParentId>7258998c-60b8-47e2-8829-f83898ca8b4a</ParentId>
+      <Name>Utils</Name>
+      <FileName>Utils\Utils.veproj</FileName>
+    </Item>
+    <Item xsi:type="SolutionFolder">
+      <Id>7258998c-60b8-47e2-8829-f83898ca8b4a</Id>
+      <ParentId>d8890adf-38b1-4221-914a-d3ea8b563e54</ParentId>
+      <Name>Modules</Name>
+      <FileName>Modules</FileName>
+    </Item>
+    <Item xsi:type="UnloadedProject">
+      <Id>e3026343-394f-496b-986e-3d2407672427</Id>
+      <ParentId>7258998c-60b8-47e2-8829-f83898ca8b4a</ParentId>
+      <FileName>GxInstrumentationHidDevice\GxInstrumentationHidDevice.veproj</FileName>
     </Item>
   </UnloadedChildren>
   <FormattingOptions>
