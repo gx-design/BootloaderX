@@ -49,57 +49,6 @@ static void SystemClock_Config (void)
 }
 
 #define SECTOR_MASK ((uint32_t)0xFFFFFF07)
-bool user_erase_flash (uint32_t Start_Addr, uint32_t End_Addr)
-{
-    FLASH_EraseInitTypeDef EraseInitStruct;
-
-    auto flash_sr = FLASH->SR;
-    auto flash_cr = FLASH->CR;
-
-    HAL_FLASH_Unlock ();
-
-    // flash_sr = FLASH->SR;
-    // flash_cr = FLASH->CR;
-
-
-    //__HAL_FLASH_CLEAR_FLAG (FLASH_FLAG_EOP | FLASH_FLAG_OPERR |
-    //                        FLASH_FLAG_WRPERR | FLASH_FLAG_PGAERR |
-    //                        FLASH_FLAG_PGSERR);
-
-    // flash_sr = FLASH->SR;
-    // flash_cr = FLASH->CR;
-
-    ///* If the previous operation is completed, proceed to erase the sector */
-     FLASH->CR &= CR_PSIZE_MASK;
-     FLASH->CR |= 512;
-     FLASH->CR &= SECTOR_MASK;
-     FLASH->CR |= FLASH_CR_SER | (FLASH_SECTOR_5 << POSITION_VAL
-     (FLASH_CR_SNB));
-     FLASH->CR |= FLASH_CR_STRT;
-
-    FLASH_Erase_Sector (FLASH_SECTOR_5, FLASH_VOLTAGE_RANGE_3);
-    FLASH_WaitForLastOperation (10000);
-    FLASH_Erase_Sector (FLASH_SECTOR_6, FLASH_VOLTAGE_RANGE_3);
-    FLASH_WaitForLastOperation (10000);
-
-    HAL_FLASH_Program (TYPEPROGRAM_BYTE, 0x08010000, 0xAA);
-
-    flash_sr = FLASH->SR;
-    flash_cr = FLASH->CR;
-
-    uint32_t* ptr = (uint32_t*)0x08010000;
-
-    uint32_t value = *ptr;
-
-    if (value == 0xFFFFFFFF)
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
-}
 
 
 #pragma mark Member Implementations
@@ -114,9 +63,111 @@ DiscoveryBoard::DiscoveryBoard ()
     static STM32UsbHidDevice device;
     hidDevice = &device;
 
-    //user_erase_flash (0, 0);
+    dispatcherActions = new DispatcherActions ();
+
+    dispatcherActions->EnterCriticalSection = []
+    {
+        __disable_irq ();
+    };
+
+    dispatcherActions->ExitCriticalSection = []
+    {
+        __enable_irq ();
+    };
+
+    // user_erase_flash (0, 0);
 }
 
 DiscoveryBoard::~DiscoveryBoard ()
 {
+}
+
+void DiscoveryBoard::EraseFirmware ()
+{
+    HAL_FLASH_Unlock ();
+
+    __HAL_FLASH_CLEAR_FLAG (FLASH_FLAG_EOP | FLASH_FLAG_OPERR |
+                            FLASH_FLAG_WRPERR | FLASH_FLAG_PGAERR |
+                            FLASH_FLAG_PGSERR);
+
+    FLASH_Erase_Sector (FLASH_SECTOR_3, FLASH_VOLTAGE_RANGE_3);
+
+    FLASH_WaitForLastOperation (10000);
+
+    FLASH_Erase_Sector (FLASH_SECTOR_4, FLASH_VOLTAGE_RANGE_3);
+
+    FLASH_WaitForLastOperation (10000);
+
+    FLASH_Erase_Sector (FLASH_SECTOR_5, FLASH_VOLTAGE_RANGE_3);
+
+    FLASH_WaitForLastOperation (10000);
+
+    FLASH_Erase_Sector (FLASH_SECTOR_6, FLASH_VOLTAGE_RANGE_3);
+    FLASH_WaitForLastOperation (10000);
+
+    // HAL_FLASH_Lock ();
+}
+
+void DiscoveryBoard::FlashData (uint32_t address, uint64_t data)
+{
+    uint32_t* ptr = (uint32_t*)&data;
+
+    HAL_FLASH_Program (TYPEPROGRAM_FASTWORD, address, *ptr++);
+    FLASH_WaitForLastOperation (10000);
+    HAL_FLASH_Program (TYPEPROGRAM_FASTWORD, address, *ptr);
+    FLASH_WaitForLastOperation (10000);
+}
+
+void DiscoveryBoard::FlashData (uint32_t address, uint32_t data)
+{
+    HAL_FLASH_Program (TYPEPROGRAM_FASTWORD, address, data);
+    FLASH_WaitForLastOperation (10000);
+}
+
+void DiscoveryBoard::FlashData (uint32_t address, uint16_t data)
+{
+    HAL_FLASH_Program (TYPEPROGRAM_FASTHALFWORD, address, data);
+    FLASH_WaitForLastOperation (10000);
+}
+
+void DiscoveryBoard::FlashData (uint32_t address, uint8_t data)
+{
+    HAL_FLASH_Unlock ();
+    HAL_FLASH_Program (TYPEPROGRAM_FASTBYTE, address, data);
+    FLASH_WaitForLastOperation (10000);
+}
+
+typedef void (*pFunction) (void);
+pFunction Jump_To_Application;
+uint32_t JumpAddress;
+uint32_t ApplicationAddress;
+
+void DiscoveryBoard::JumpToApplication ()
+{
+/* Check Vector Table: Test if user code is programmed starting from address
+
+"APPLICATION_ADDRESS" */
+#define APPLICATION_ADDRESS (0x0800C000)
+
+    auto initsp = ((*(__IO uint32_t*)APPLICATION_ADDRESS) & 0x2FFE0000);
+
+
+    if (((initsp & 3) == 0) && initsp == 0x20000000)
+    // in regular RAM region 128KB
+
+    {
+
+        SCB->VTOR = FLASH_BASE | 0xC000;
+        /* Jump to user application */
+
+        JumpAddress = *(__IO uint32_t*)(APPLICATION_ADDRESS + 4);
+
+        Jump_To_Application = (pFunction)JumpAddress;
+
+        /* Initialize user application's Stack Pointer */
+
+        __set_MSP (*(__IO uint32_t*)APPLICATION_ADDRESS);
+
+        Jump_To_Application ();
+    }
 }

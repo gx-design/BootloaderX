@@ -1,7 +1,7 @@
 /******************************************************************************
-*       Description: 
+*       Description:
 *
-*       Author: 
+*       Author:
 *         Date: 10 November 2015
 *
 *******************************************************************************/
@@ -18,15 +18,19 @@
 class DiscoveryBoard : public IBoard
 {
 #pragma mark Public Members
-public:
-
+  public:
     DiscoveryBoard ();
     ~DiscoveryBoard ();
 
+    void EraseFirmware ();
+    void FlashData (uint32_t address, uint64_t data);
+    void FlashData (uint32_t address, uint32_t data);
+    void FlashData (uint32_t address, uint16_t data);
+    void FlashData (uint32_t address, uint8_t data);
+    void JumpToApplication ();
 
 #pragma mark Private Members
-private:
-
+  private:
 };
 
 #endif
