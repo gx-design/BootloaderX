@@ -22,17 +22,21 @@
 
 
 #pragma mark Member Implementations
-GxBootloaderHidDevice::GxBootloaderHidDevice (IUsbHidDevice& hidDevice)
-    : GxInstrumentationHidDevice (hidDevice)
+GxBootloaderHidDevice::GxBootloaderHidDevice (IUsbHidDevice& hidDevice,
+                                              Dispatcher& mainDispatcher)
+    : GxInstrumentationHidDevice (hidDevice), mainDispatcher (mainDispatcher)
 {
     packetBuffer.elements = &packetData[0];
     packetBuffer.length = sizeof (packetData);
 
     packet.SetBuffer (&packetBuffer);
 
-    DataReceived += [this](void* sender, EventArgs& e)
+    DataReceived += [&](void* sender, EventArgs& e)
     {
-        ProcessDataReceived (sender, e);
+        mainDispatcher.BeginInvoke ([&]
+                                    {
+                                        ProcessDataReceived (sender, e);
+                                    });
     };
 
     parser.PacketReceived += [this](void* sender, EventArgs& e)
@@ -43,6 +47,16 @@ GxBootloaderHidDevice::GxBootloaderHidDevice (IUsbHidDevice& hidDevice)
 
 GxBootloaderHidDevice::~GxBootloaderHidDevice ()
 {
+}
+
+void GxBootloaderHidDevice::Acknowlege (uint8_t command)
+{
+    packet.Reset ();
+    packet.Add (command);
+    packet.Add (true);
+    packet.Finalise ();
+
+    SendData (packet.GetPacket ());
 }
 
 void GxBootloaderHidDevice::ProcessDataReceived (void* sender, EventArgs& e)
@@ -64,28 +78,68 @@ void GxBootloaderHidDevice::ProcessPacketReceived (void* sender, EventArgs& e)
 
     switch (command)
     {
-    case 0x80:
-        auto settingId = (SettingId)parser.ReadByte ();
-        bool write = parser.ReadBool ();
+        case 0x80: // variable commands
+        {
+            auto settingId = (SettingId)parser.ReadByte ();
+            bool write = parser.ReadBool ();
 
-        if (write)
-        {
-        }
-        else
-        {
-            switch (settingId)
+            if (write)
             {
-            case SettingId::BootloaderVersion:
-                packet.Add (0.02f);
+            }
+            else
+            {
+                switch (settingId)
+                {
+                    case SettingId::BootloaderVersion:
+                        packet.Add (0.02f);
+                        break;
+
+                    default:
+                        break;
+                }
+
+                packet.Finalise ();
+
+                SendData (packet.GetPacket ());
+            }
+        }
+        break;
+
+        case 0x81: // bootloader commands
+        {
+            auto flashCmd = parser.ReadByte ();
+
+            switch (flashCmd)
+            {
+                case 0: // begin flash operation.
+                {
+                    if (EraseFirmwareRequested != nullptr)
+                    {
+                        EventArgs args;
+                        EraseFirmwareRequested (this, args);
+                    }
+                }
                 break;
 
-            default:
+                case 1:
+                {
+                    if (FlashDataRequested != nullptr)
+                    {
+                        FlashDataEventArgs args;
+                        args.length = parser.ReadByte ();
+
+                        for (uint32_t i = 0; i < args.length; i++)
+                        {
+                            currentFlashData[i] = parser.ReadByte ();
+                        }
+
+                        args.data = &currentFlashData[0];
+
+                        FlashDataRequested (this, args);
+                    }
+                }
                 break;
             }
-
-            packet.Finalise ();
-
-            SendData (packet.GetPacket ());
         }
         break;
     }
