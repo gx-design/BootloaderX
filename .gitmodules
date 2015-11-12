@@ -19,3 +19,6 @@
 [submodule "Utils"]
 	path = Utils
 	url = git@gxgroup.duia.eu:gx/Utils.git
+[submodule "Dispatcher"]
+	path = Dispatcher
+	url = git@gxgroup.duia.eu:gx/Dispatcher.git
