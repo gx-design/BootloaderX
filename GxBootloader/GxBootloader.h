@@ -30,7 +30,9 @@ class GxBootloader
 #pragma mark Private Members
   private:
     IBoard& board;
+    Dispatcher mainDispatcher;
     GxBootloaderHidDevice UsbInterface;
+    uint32_t currentAddress;
 };
 
 #endif
