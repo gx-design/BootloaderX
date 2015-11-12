@@ -14,19 +14,25 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include "GxInstrumentationHidDevice.h"
+#include "IDP.h"
 
 class GxBootloaderHidDevice : public GxInstrumentationHidDevice
 {
 #pragma mark Public Members
   public:
     GxBootloaderHidDevice (IUsbHidDevice& hidDevice);
-                           
+
     ~GxBootloaderHidDevice ();
 
 
 #pragma mark Private Members
-private:
-
+  private:
+    void ProcessDataReceived (void* sender, EventArgs& e);
+    void ProcessPacketReceived (void* sender, EventArgs& e);
+    uint8_t packetData[128];
+    Buffer packetBuffer;
+    IDPPacket packet;
+    IDP parser;
 };
 
 #endif

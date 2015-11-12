@@ -21,7 +21,8 @@
 
 
 #pragma mark Member Implementations
-GxBootloader::GxBootloader (IBoard& board) : board (board), UsbInterface(GxBootloaderHidDevice(*board.hidDevice))
+GxBootloader::GxBootloader (IBoard& board)
+    : board (board), UsbInterface (GxBootloaderHidDevice (*board.hidDevice))
 {
 }
 
@@ -32,7 +33,7 @@ GxBootloader::~GxBootloader ()
 void GxBootloader::Run ()
 {
     Initialise ();
-    
+
     uint32_t i = 0;
 
     while (true)
