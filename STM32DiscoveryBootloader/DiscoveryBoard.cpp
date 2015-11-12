@@ -48,6 +48,59 @@ static void SystemClock_Config (void)
     HAL_RCC_ClockConfig (&RCC_ClkInitStruct, FLASH_LATENCY_5);
 }
 
+#define SECTOR_MASK ((uint32_t)0xFFFFFF07)
+bool user_erase_flash (uint32_t Start_Addr, uint32_t End_Addr)
+{
+    FLASH_EraseInitTypeDef EraseInitStruct;
+
+    auto flash_sr = FLASH->SR;
+    auto flash_cr = FLASH->CR;
+
+    HAL_FLASH_Unlock ();
+
+    // flash_sr = FLASH->SR;
+    // flash_cr = FLASH->CR;
+
+
+    //__HAL_FLASH_CLEAR_FLAG (FLASH_FLAG_EOP | FLASH_FLAG_OPERR |
+    //                        FLASH_FLAG_WRPERR | FLASH_FLAG_PGAERR |
+    //                        FLASH_FLAG_PGSERR);
+
+    // flash_sr = FLASH->SR;
+    // flash_cr = FLASH->CR;
+
+    ///* If the previous operation is completed, proceed to erase the sector */
+     FLASH->CR &= CR_PSIZE_MASK;
+     FLASH->CR |= 512;
+     FLASH->CR &= SECTOR_MASK;
+     FLASH->CR |= FLASH_CR_SER | (FLASH_SECTOR_5 << POSITION_VAL
+     (FLASH_CR_SNB));
+     FLASH->CR |= FLASH_CR_STRT;
+
+    FLASH_Erase_Sector (FLASH_SECTOR_5, FLASH_VOLTAGE_RANGE_3);
+    FLASH_WaitForLastOperation (10000);
+    FLASH_Erase_Sector (FLASH_SECTOR_6, FLASH_VOLTAGE_RANGE_3);
+    FLASH_WaitForLastOperation (10000);
+
+    HAL_FLASH_Program (TYPEPROGRAM_BYTE, 0x08010000, 0xAA);
+
+    flash_sr = FLASH->SR;
+    flash_cr = FLASH->CR;
+
+    uint32_t* ptr = (uint32_t*)0x08010000;
+
+    uint32_t value = *ptr;
+
+    if (value == 0xFFFFFFFF)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
 
 #pragma mark Member Implementations
 DiscoveryBoard::DiscoveryBoard ()
@@ -55,11 +108,13 @@ DiscoveryBoard::DiscoveryBoard ()
     HAL_Init ();
 
     SystemClock_Config ();
-    
+
     __GPIOA_CLK_ENABLE ();
 
     static STM32UsbHidDevice device;
     hidDevice = &device;
+
+    //user_erase_flash (0, 0);
 }
 
 DiscoveryBoard::~DiscoveryBoard ()
