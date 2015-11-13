@@ -23,7 +23,7 @@ class GxBootloader
     GxBootloader (IBoard& board);
     ~GxBootloader ();
 
-    const float Version = 0.03;
+    const float Version = 0.86;
 
     void Run (void);
     void Initialise (void);
