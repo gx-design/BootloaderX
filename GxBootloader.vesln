@@ -58,6 +58,12 @@
       <ParentId>7258998c-60b8-47e2-8829-f83898ca8b4a</ParentId>
       <FileName>GxInstrumentationHidDevice\GxInstrumentationHidDevice.veproj</FileName>
     </Item>
+    <Item xsi:type="UnloadedProject">
+      <Id>d284b8b4-04d0-4c46-960f-8b409f1665d9</Id>
+      <ParentId>7258998c-60b8-47e2-8829-f83898ca8b4a</ParentId>
+      <Name>Dispatcher</Name>
+      <FileName>Dispatcher\Dispatcher.veproj</FileName>
+    </Item>
   </UnloadedChildren>
   <FormattingOptions>
     <AccessModifierOffset>-2</AccessModifierOffset>
@@ -82,7 +88,7 @@
     <ContinuationIndentWidth>0</ContinuationIndentWidth>
     <Cpp11BracedListStyle>false</Cpp11BracedListStyle>
     <DerivePointerBinding>false</DerivePointerBinding>
-    <IndentCaseLabels>false</IndentCaseLabels>
+    <IndentCaseLabels>true</IndentCaseLabels>
     <IndentFunctionDeclarationAfterType>false</IndentFunctionDeclarationAfterType>
     <IndentationWidth>4</IndentationWidth>
     <Language>Cpp</Language>
