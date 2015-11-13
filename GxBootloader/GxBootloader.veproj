@@ -29,6 +29,11 @@
       <ParentId>94667c5e-21de-4f1d-9b02-cc04b4df0138</ParentId>
       <LocationRelativeToParent>GxBootloaderHidDevice.h</LocationRelativeToParent>
     </ProjectItem>
+    <ProjectItem xsi:type="ProjectFile">
+      <Id>196e7f6d-593d-411f-935f-450ad470ca3b</Id>
+      <ParentId>94667c5e-21de-4f1d-9b02-cc04b4df0138</ParentId>
+      <LocationRelativeToParent>IBoard.h</LocationRelativeToParent>
+    </ProjectItem>
   </Children>
   <ExportedIncludes>
     <string>GxBootloader</string>
@@ -71,5 +76,6 @@
     <string>IntegratedDebugProtocol\IntegratedDebugProtocol.veproj</string>
     <string>Utils\Utils.veproj</string>
     <string>GxInstrumentationHidDevice\GxInstrumentationHidDevice.veproj</string>
+    <string>Dispatcher\Dispatcher.veproj</string>
   </References>
 </Project>
