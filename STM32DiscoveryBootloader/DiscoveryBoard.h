@@ -14,6 +14,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include "IBoard.h"
+#include "GxBootloader.h"
 
 class DiscoveryBoard : public IBoard
 {
@@ -22,15 +23,9 @@ class DiscoveryBoard : public IBoard
     DiscoveryBoard ();
     ~DiscoveryBoard ();
 
-    void EraseFirmware ();
-    void FlashData (uint32_t address, uint64_t data);
-    void FlashData (uint32_t address, uint32_t data);
-    void FlashData (uint32_t address, uint16_t data);
-    void FlashData (uint32_t address, uint8_t data);
-    void JumpToApplication ();
-
 #pragma mark Private Members
   private:
+    
 };
 
 #endif
