@@ -31,16 +31,49 @@ GxBootloader::~GxBootloader ()
 {
 }
 
+void GxBootloader::InitialiseFlags ()
+{
+    BootloaderFlags flags;
+        
+    flags.Version = GxBootloader::Version;
+
+    board.BootloaderService->WriteFlags (&flags);
+}
+
+void GxBootloader::SetState (BootloaderState state)
+{
+    auto flags = *board.BootloaderService->ReadFlags ();
+
+    flags.State = state;
+
+    board.BootloaderService->WriteFlags (&flags);
+}
 
 void GxBootloader::Run ()
 {
-    board.JumpToApplication ();
-    
-    Initialise ();   
+    if (!board.BootloaderService->ReadFlags ()->IsBootloaderPresent ())
+    {
+        InitialiseFlags ();
+    }
+
+    if (board.BootloaderService->ReadFlags ()->State == BootloaderState::Normal)
+    {
+        board.BootloaderService->JumpToApplication ();
+
+        SetState (BootloaderState::Bootloader);
+    }
+
+    Initialise ();
+
+    UsbInterface.BootloaderVersionRequested +=
+    [&](void* sender, EventArgs& args)
+    {
+        UsbInterface.SendBootloaderVersion (GxBootloader::Version);
+    };
 
     UsbInterface.EraseFirmwareRequested += [&](void* sender, EventArgs& args)
     {
-        board.EraseFirmware ();
+        board.BootloaderService->EraseFirmware ();
 
         currentAddress = 0x0800C000;
         UsbInterface.Acknowlege (0);
@@ -57,26 +90,36 @@ void GxBootloader::Run ()
             if (remainingSize >= 4)
             {
                 uint32_t* data = (uint32_t*)&flashArgs.data[i];
-                board.FlashData (currentAddress, *data);
+                board.BootloaderService->FlashData (currentAddress, *data);
                 i += 4;
                 currentAddress += 4;
             }
             else if (remainingSize >= 2)
             {
                 uint16_t* data = (uint16_t*)&flashArgs.data[i];
-                board.FlashData (currentAddress, *data);
+                board.BootloaderService->FlashData (currentAddress, *data);
                 i += 2;
                 currentAddress += 2;
             }
             else if (remainingSize >= 1)
             {
-                board.FlashData (currentAddress, flashArgs.data[i]);
+                board.BootloaderService->FlashData (currentAddress,
+                                                    flashArgs.data[i]);
                 i++;
                 currentAddress++;
             }
         }
 
         UsbInterface.Acknowlege (1);
+    };
+
+    UsbInterface.FinaliseImageRequested += [&](void* sender, EventArgs& args)
+    {
+        SetState (BootloaderState::Normal);
+
+        UsbInterface.Acknowlege (1);
+
+        board.BootloaderService->SystemReset ();
     };
 
     while (true)

@@ -69,12 +69,19 @@ void GxBootloaderHidDevice::ProcessDataReceived (void* sender, EventArgs& e)
     }
 }
 
+void GxBootloaderHidDevice::SendBootloaderVersion (float version)
+{
+    packet.Reset ();
+    packet.Add ((uint8_t)80);
+    packet.Add (version);
+    packet.Finalise ();
+
+    SendData (packet.GetPacket ());
+}
+
 void GxBootloaderHidDevice::ProcessPacketReceived (void* sender, EventArgs& e)
 {
     auto command = parser.receiveBuffer->Read ();
-
-    packet.Reset ();
-    packet.Add (command);
 
     switch (command)
     {
@@ -91,16 +98,16 @@ void GxBootloaderHidDevice::ProcessPacketReceived (void* sender, EventArgs& e)
                 switch (settingId)
                 {
                     case SettingId::BootloaderVersion:
-                        packet.Add (0.02f);
+                        if (BootloaderVersionRequested != nullptr)
+                        {
+                            EventArgs args;
+                            BootloaderVersionRequested (this, args);
+                        }
                         break;
 
                     default:
                         break;
                 }
-
-                packet.Finalise ();
-
-                SendData (packet.GetPacket ());
             }
         }
         break;
@@ -136,6 +143,17 @@ void GxBootloaderHidDevice::ProcessPacketReceived (void* sender, EventArgs& e)
                         args.data = &currentFlashData[0];
 
                         FlashDataRequested (this, args);
+                    }
+                }
+                break;
+
+                case 2:
+                {
+                    if (FinaliseImageRequested != nullptr)
+                    {
+                        EventArgs args;
+
+                        FinaliseImageRequested (this, args);
                     }
                 }
                 break;

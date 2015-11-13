@@ -23,6 +23,8 @@ class GxBootloader
     GxBootloader (IBoard& board);
     ~GxBootloader ();
 
+    const float Version = 0.03;
+
     void Run (void);
     void Initialise (void);
 
@@ -33,6 +35,9 @@ class GxBootloader
     Dispatcher mainDispatcher;
     GxBootloaderHidDevice UsbInterface;
     uint32_t currentAddress;
+
+    void InitialiseFlags ();
+    void SetState (BootloaderState state);
 };
 
 #endif

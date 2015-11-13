@@ -37,7 +37,11 @@ class GxBootloaderHidDevice : public GxInstrumentationHidDevice
 
     Event<EventArgs> EraseFirmwareRequested;
     Event<FlashDataEventArgs> FlashDataRequested;
+    Event<EventArgs> FinaliseImageRequested;
+    Event<EventArgs> BootloaderVersionRequested;
+    Event<EventArgs> FirmwareVersionRequested;
 
+    void SendBootloaderVersion (float version);
     void Acknowlege (uint8_t command);
 
 #pragma mark Private Members

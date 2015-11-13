@@ -14,21 +14,17 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include "GxBootloaderHidDevice.h"
+#include "IBootloaderService.h"
 
 class IBoard
 {
 #pragma mark Public Members
   public:
     IUsbHidDevice* hidDevice;
+
     DispatcherActions* dispatcherActions;
 
-    virtual void EraseFirmware () = 0;
-    virtual void FlashData (uint32_t address, uint64_t data) = 0;
-    virtual void FlashData (uint32_t address, uint32_t data) = 0;
-    virtual void FlashData (uint32_t address, uint16_t data) = 0;
-    virtual void FlashData (uint32_t address, uint8_t data) = 0;
-
-    virtual void JumpToApplication () = 0;
+    IBootloaderService* BootloaderService;
 
 
 #pragma mark Private Members
