@@ -13,7 +13,8 @@
 #include "BootloaderSettings.h"
 
 #pragma mark Definitions and Constants
-
+static const uint16_t vendorId = 0xFC01;
+static const uint16_t productId = 0x0001;
 
 #pragma mark Static Data
 
@@ -24,7 +25,7 @@
 #pragma mark Member Implementations
 GxBootloaderHidDevice::GxBootloaderHidDevice (IUsbHidDevice& hidDevice,
                                               Dispatcher& mainDispatcher)
-    : GxInstrumentationHidDevice (hidDevice), mainDispatcher (mainDispatcher)
+    : GxInstrumentationHidDevice (hidDevice, vendorId, productId), mainDispatcher (mainDispatcher)
 {
     packetBuffer.elements = &packetData[0];
     packetBuffer.length = sizeof (packetData);
