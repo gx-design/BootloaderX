@@ -54,7 +54,7 @@
   <Configurations>
     <ProjectConfiguration>
       <Name>Default</Name>
-      <ToolChain xsi:type="ClangToolChain">
+      <ToolChain xsi:type="GCCToolChain">
         <Optimization>Off</Optimization>
         <OptimizationPriority>None</OptimizationPriority>
       </ToolChain>
@@ -74,8 +74,8 @@
       <NotUseStandardStartupFiles>true</NotUseStandardStartupFiles>
       <Fpu>Hard</Fpu>
       <Library>NanoCLib</Library>
-      <Optimization>Debug</Optimization>
-      <OptimizationPreference>None</OptimizationPreference>
+      <Optimization>Level3</Optimization>
+      <OptimizationPreference>Size</OptimizationPreference>
       <LinkedLibraries />
       <SelectedDeviceName>STM32F407VG</SelectedDeviceName>
       <SelectedDeviceId>119</SelectedDeviceId>
