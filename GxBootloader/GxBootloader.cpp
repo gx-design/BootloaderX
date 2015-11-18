@@ -34,7 +34,7 @@ GxBootloader::~GxBootloader ()
 void GxBootloader::InitialiseFlags ()
 {
     BootloaderFlags flags;
-        
+
     flags.Version = GxBootloader::Version;
 
     board.BootloaderService->WriteFlags (&flags);
