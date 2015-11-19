@@ -56,6 +56,15 @@ void GxBootloader::Run ()
         InitialiseFlags ();
     }
 
+    if (board.BootloaderService->ReadFlags ()->Version != Version)
+    {
+        auto flags = *board.BootloaderService->ReadFlags ();
+
+        flags.Version = Version;
+
+        board.BootloaderService->WriteFlags (&flags);
+    }
+
     if (board.BootloaderService->ReadFlags ()->State == BootloaderState::Normal)
     {
         board.BootloaderService->JumpToApplication ();
