@@ -16,6 +16,8 @@ static DiscoveryBoard board = DiscoveryBoard ();
 
 int main (void)
 {
+    GlobalEventHandlers::Initialise ();
+    
     static GxBootloader application = GxBootloader (board);
 
     application.Run ();

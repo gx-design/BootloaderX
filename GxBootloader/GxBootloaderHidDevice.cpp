@@ -25,7 +25,7 @@ static const uint16_t productId = 0x0001;
 #pragma mark Member Implementations
 GxBootloaderHidDevice::GxBootloaderHidDevice (IUsbHidDevice& hidDevice,
                                               Dispatcher& mainDispatcher)
-    : GxInstrumentationHidDevice (hidDevice, vendorId, productId), mainDispatcher (mainDispatcher)
+    : GxInstrumentationHidDevice (hidDevice, vendorId, productId)
 {
     packetBuffer.elements = &packetData[0];
     packetBuffer.length = sizeof (packetData);

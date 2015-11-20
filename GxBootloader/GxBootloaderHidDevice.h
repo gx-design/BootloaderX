@@ -53,7 +53,6 @@ class GxBootloaderHidDevice : public GxInstrumentationHidDevice
     Buffer packetBuffer;
     IDPPacket packet;
     IDP parser;
-    Dispatcher& mainDispatcher;
 };
 
 #endif
