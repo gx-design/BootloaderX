@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <Id>83c5b1e7-a8c0-4bd4-830a-0a865e0a6940</Id>
-  <ParentId>d8890adf-38b1-4221-914a-d3ea8b563e54</ParentId>
   <LocationRelativeToParent>STM32DiscoveryBootloader\STM32DiscoveryBootloader.veproj</LocationRelativeToParent>
   <Children>
     <ProjectItem xsi:type="ProjectFile">

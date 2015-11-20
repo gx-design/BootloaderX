@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <Id>94667c5e-21de-4f1d-9b02-cc04b4df0138</Id>
-  <ParentId>d8890adf-38b1-4221-914a-d3ea8b563e54</ParentId>
   <LocationRelativeToParent>GxBootloader\GxBootloader.veproj</LocationRelativeToParent>
   <Children>
     <ProjectItem xsi:type="ProjectFile">
