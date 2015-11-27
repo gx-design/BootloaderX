@@ -20,12 +20,12 @@
       "Name": "GxBootloader"
     },
     {
-      "Name": "STM32F4Cube"
+      "Name": "STM32F4Cube",
       "GitUrl": "http://gxgroup.duia.eu/gx/STM32F4Cube.git",
       "Revision": "HEAD"
     },
     {
-      "Name": "STM32HalPlatform"
+      "Name": "STM32HalPlatform",
       "GitUrl": "http://gxgroup.duia.eu/gx/STM32HalPlatform.git",
       "Revision": "HEAD"
     }
