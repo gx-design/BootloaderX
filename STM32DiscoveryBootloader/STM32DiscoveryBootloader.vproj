@@ -18,8 +18,6 @@
     },
     {
       "Name": "GxBootloader"
-      "GitUrl": "http://gxgroup.duia.eu/gx/GxBootloader.git",
-      "Revision": "HEAD"
     },
     {
       "Name": "STM32F4Cube"
