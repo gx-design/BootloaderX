@@ -7,15 +7,23 @@
   "References": [
     {
       "Name": "IntegratedDebugProtocol"
+      "GitUrl": "http://gxgroup.duia.eu/gx/IntegratedDebugProtocol.git",
+      "Revision": "HEAD"
     },
     {
       "Name": "Utils"
+      "GitUrl": "http://gxgroup.duia.eu/gx/Utils.git",
+      "Revision": "HEAD"
     },
     {
       "Name": "GxInstrumentationHidDevice"
+      "GitUrl": "http://gxgroup.duia.eu/gx/GxInstrumentationHidDevice.git",
+      "Revision": "HEAD"
     },
     {
       "Name": "Dispatcher"
+      "GitUrl": "http://gxgroup.duia.eu/gx/Dispatcher.git",
+      "Revision": "HEAD"
     }
   ],
   "PublicIncludes": [
