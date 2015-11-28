@@ -68,6 +68,9 @@
     "-O3",
     "-Os"
   ],
+  "LinkerArguments" : [
+    "-Wl,--gc-sections"
+  ],
   "BuiltinLibraries": [
     "m",
     "c_nano",
