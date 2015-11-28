@@ -1,0 +1,32 @@
+{
+  "Name": "GxBootloader",
+  "Languages": [
+    "Cpp"
+  ],
+  "Type": "StaticLibrary",
+  "References": [
+    {
+      "Name": "IntegratedDebugProtocol"
+    },
+    {
+      "Name": "Utils"
+    },
+    {
+      "Name": "GxInstrumentationHidDevice"
+    },
+    {
+      "Name": "Dispatcher"
+    }
+  ],
+  "PublicIncludes": [
+    "./"
+  ],
+  "SourceFiles": [
+    {
+      "File": "GxBootloader.cpp"
+    },
+    {
+      "File": "GxBootloaderHidDevice.cpp"
+    }
+  ]
+}
