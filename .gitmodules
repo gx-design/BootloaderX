@@ -1,24 +1,24 @@
 [submodule "STM32F4Cube"]
 	path = STM32F4Cube
-	url = git@gxgroup.duia.eu:gx/STM32F4Cube.git
+	url = git@gxgitlab.int:GXDesign/STM32F4Cube.git
 [submodule "ArmSystem"]
 	path = ArmSystem
-	url = git@gxgroup.duia.eu:gx/ArmSystem.git
+	url = git@gxgitlab.int:GXDesign/ArmSystem.git
 [submodule "CommonHal"]
 	path = CommonHal
-	url = git@gxgroup.duia.eu:gx/CommonHal.git
+	url = git@gxgitlab.int:GXDesign/CommonHal.git
 [submodule "GxInstrumentationHidDevice"]
 	path = GxInstrumentationHidDevice
-	url = git@gxgroup.duia.eu:gx/GxInstrumentationHidDevice.git
+	url = git@gxgitlab.int:GXDesign/GxInstrumentationHidDevice.git
 [submodule "IntegratedDebugProtocol"]
 	path = IntegratedDebugProtocol
-	url = git@gxgroup.duia.eu:gx/IntegratedDebugProtocol.git
+	url = git@gxgitlab.int:GXDesign/IntegratedDebugProtocol.git
 [submodule "STM32HalPlatform"]
 	path = STM32HalPlatform
-	url = git@gxgroup.duia.eu:gx/STM32HalPlatform.git
+	url = git@gxgitlab.int:GXDesign/STM32HalPlatform.git
 [submodule "Utils"]
 	path = Utils
-	url = git@gxgroup.duia.eu:gx/Utils.git
+	url = git@gxgitlab.int:GXDesign/Utils.git
 [submodule "Dispatcher"]
 	path = Dispatcher
-	url = git@gxgroup.duia.eu:gx/Dispatcher.git
+	url = git@gxgitlab.int:GXDesign/Dispatcher.git
