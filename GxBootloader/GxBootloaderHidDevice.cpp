@@ -9,8 +9,10 @@
 
 
 #pragma mark Includes
-#include "GxBootloaderHidDevice.h"
 #include "BootloaderSettings.h"
+#include "Dispatcher.h"
+#include "GxBootloaderHidDevice.h"
+#include "IDPStack.h"
 
 #pragma mark Definitions and Constants
 static const uint16_t vendorId = 0xFC01;
@@ -23,34 +25,33 @@ static const uint16_t productId = 0x0001;
 
 
 #pragma mark Member Implementations
-GxBootloaderHidDevice::GxBootloaderHidDevice (IUsbHidDevice& hidDevice,
-                                              Dispatcher& mainDispatcher)
-    : GxInstrumentationHidDevice (hidDevice, vendorId, productId)
+GxBootloaderHidDevice::GxBootloaderHidDevice (IUsbHidDevice& hidDevice, Dispatcher& mainDispatcher)
+    : GxInstrumentationHidDevice (hidDevice, vendorId, productId), router (*new IDPRouter ()),
+      stack (IDPStack::CreateIDPStack (1, NULL, router))
 {
-    packetBuffer.elements = &packetData[0];
-    packetBuffer.length = sizeof (packetData);
 
-    packet.SetBuffer (&packetBuffer);
-
-    DataReceived += [&](void* sender, EventArgs& e)
-    {
-        mainDispatcher.BeginInvoke ([&]
-                                    {
-                                        ProcessDataReceived (sender, e);
-                                    });
-    };
-
-    parser.PacketReceived += [this](void* sender, EventArgs& e)
-    {
-        ProcessPacketReceived (sender, e);
-    };
+    DataReceived.Subscribe<GxBootloaderHidDevice, &GxBootloaderHidDevice::OnDataReceived> (this);
 }
 
 GxBootloaderHidDevice::~GxBootloaderHidDevice ()
 {
 }
 
-void GxBootloaderHidDevice::Acknowlege (uint8_t command)
+void GxBootloaderHidDevice::OnDataReceived (void* sender, EventArgs& e)
+{
+    Dispatcher::GetMainDispatcher ().BeginInvoke (
+    Action::Create<GxBootloaderHidDevice, &GxBootloaderHidDevice::ProcessDataReceived> (this));
+}
+
+void GxBootloaderHidDevice::ProcessDataReceived ()
+{
+    while (HasBytes ())
+    {
+        stack.GetInterface ().ProcessByte (ReceiveData ());
+    }
+}
+
+/*void GxBootloaderHidDevice::Acknowlege (uint8_t command)
 {
     packet.Reset ();
     packet.Add (command);
@@ -58,16 +59,6 @@ void GxBootloaderHidDevice::Acknowlege (uint8_t command)
     packet.Finalise ();
 
     SendData (packet.GetPacket ());
-}
-
-void GxBootloaderHidDevice::ProcessDataReceived (void* sender, EventArgs& e)
-{
-    uint8_t index = 0;
-    while (HasBytes () && index < 64)
-    {
-        parser.ProcessByte (ReceiveData ());
-        index++;
-    }
 }
 
 void GxBootloaderHidDevice::SendBootloaderVersion (float version)
@@ -86,67 +77,67 @@ void GxBootloaderHidDevice::ProcessPacketReceived (void* sender, EventArgs& e)
 
     switch (command)
     {
-        case 0x80: // variable commands
+    case 0x80: // variable commands
+    {
+        auto settingId = (SettingId)parser.ReadByte ();
+        bool write = parser.ReadBool ();
+
+        if (write)
         {
-            auto settingId = (SettingId)parser.ReadByte ();
-            bool write = parser.ReadBool ();
-
-            if (write)
+        }
+        else
+        {
+            switch (settingId)
             {
-            }
-            else
-            {
-                switch (settingId)
+            case SettingId::BootloaderVersion:
+                if (BootloaderVersionRequested != nullptr)
                 {
-                    case SettingId::BootloaderVersion:
-                        if (BootloaderVersionRequested != nullptr)
-                        {
-                            EventArgs args;
-                            BootloaderVersionRequested (this, args);
-                        }
-                        break;
-
-                    default:
-                        break;
+                    EventArgs args;
+                    BootloaderVersionRequested (this, args);
                 }
+                break;
+
+            default:
+                break;
+            }
+        }
+    }
+    break;
+
+    case 0x81: // bootloader commands
+    {
+        auto flashCmd = parser.ReadByte ();
+
+        switch (flashCmd)
+        {
+        case 0: // begin flash operation.
+        {
+            if (EraseFirmwareRequested != nullptr)
+            {
+                EventArgs args;
+                EraseFirmwareRequested (this, args);
             }
         }
         break;
 
-        case 0x81: // bootloader commands
+        case 1:
         {
-            auto flashCmd = parser.ReadByte ();
-
-            switch (flashCmd)
+            if (FlashDataRequested != nullptr)
             {
-                case 0: // begin flash operation.
+                FlashDataEventArgs args;
+                args.length = parser.ReadByte ();
+
+                for (uint32_t i = 0; i < args.length; i++)
                 {
-                    if (EraseFirmwareRequested != nullptr)
-                    {
-                        EventArgs args;
-                        EraseFirmwareRequested (this, args);
-                    }
+                    currentFlashData[i] = parser.ReadByte ();
                 }
-                break;
 
-                case 1:
-                {
-                    if (FlashDataRequested != nullptr)
-                    {
-                        FlashDataEventArgs args;
-                        args.length = parser.ReadByte ();
+                args.data = &currentFlashData[0];
 
-                        for (uint32_t i = 0; i < args.length; i++)
-                        {
-                            currentFlashData[i] = parser.ReadByte ();
-                        }
-
-                        args.data = &currentFlashData[0];
-
-                        FlashDataRequested (this, args);
-                    }
-                }
-                break;
+                FlashDataRequested (this, args);
+            }
+        }
+        break;
 
                 case 2:
                 {
@@ -162,4 +153,4 @@ void GxBootloaderHidDevice::ProcessPacketReceived (void* sender, EventArgs& e)
         }
         break;
     }
-}
+}*/

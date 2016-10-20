@@ -1,0 +1,111 @@
+{
+  "References": [
+    {
+      "Name": "ArmSystem"
+    },
+    {
+      "Name": "BTPlusPlus"
+    },
+    {
+      "Name": "CommonHal"
+    },
+    {
+      "Name": "Dispatcher"
+    },
+    {
+      "Name": "GxInstrumentationHidDevice"
+    },
+    {
+      "Name": "IntegratedDebugProtocol"
+    },
+    {
+      "Name": "Utils"
+    }
+  ],
+  "Toolchain": "AvalonStudio.Toolchains.Clang.ClangToolchain",
+  "ExcludedFiles": [],
+  "Type": "StaticLibrary",
+  "Includes": [
+    {
+      "Value": "../GxBootloader",
+      "Exported": true,
+      "Global": false
+    }
+  ],
+  "Defines": [
+    {
+      "Value": "STM32F407xx",
+      "Exported": false,
+      "Global": true
+    }
+  ],
+  "StaticLibraries": [],
+  "Executable": "build/bin/GxBootloader.elf",
+  "ToolchainSettings": {
+    "STM32ToolchainSettings": {
+      "CompileSettings": {
+        "Defines": [],
+        "Includes": [],
+        "DebugInformation": true,
+        "Rtti": false,
+        "Exceptions": false,
+        "CLanguageStandard": "Default",
+        "CppLanguageStandard": "Default",
+        "Optimization": "None",
+        "OptimizationPreference": "None",
+        "Fpu": "None"
+      },
+      "LinkSettings": {
+        "LinkedLibraries": [],
+        "UseMemoryLayout": false,
+        "DiscardUnusedSections": false,
+        "NotUseStandardStartupFiles": false,
+        "Library": "None",
+        "SelectedDeviceId": 0,
+        "InRom1Start": 0,
+        "InRom1Size": 0,
+        "InRom2Start": 0,
+        "InRom2Size": 0,
+        "InRam1Start": 0,
+        "InRam1Size": 0,
+        "InRam2Start": 0,
+        "InRam2Size": 0,
+        "DebugInRam": false
+      }
+    },
+    "ClangToolchainSettings": {
+      "CompileSettings": {
+        "Defines": [],
+        "Includes": [],
+        "DebugInformation": true,
+        "Rtti": false,
+        "Exceptions": false,
+        "CustomFlags": "-target arm-none-eabi -mcpu=cortex-m4 -mthumb -Wno-parentheses-equality -Wno-ignored-attributes",
+        "CLanguageStandard": "Default",
+        "CppLanguageStandard": "Default",
+        "Optimization": "None",
+        "OptimizationPreference": "Size",
+        "Fpu": "None"
+      },
+      "LinkSettings": {
+        "LinkedLibraries": [],
+        "UseMemoryLayout": true,
+        "DiscardUnusedSections": true,
+        "NotUseStandardStartupFiles": true,
+        "Library": "BaseCLib",
+        "SelectedDeviceId": 0,
+        "InRom1Start": 134217728,
+        "InRom1Size": 1048576,
+        "InRom2Start": 0,
+        "InRom2Size": 0,
+        "InRam1Start": 536870912,
+        "InRam1Size": 131072,
+        "InRam2Start": 0,
+        "InRam2Size": 0,
+        "DebugInRam": false,
+        "MiscLinkerArguments": "-mcpu=cortex-m4 -mthumb"
+      }
+    }
+  },
+  "DebugSettings": {}
+}

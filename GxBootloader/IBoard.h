@@ -10,22 +10,23 @@
 #define _IBOARD_H_
 
 #pragma mark Includes
-#include <stddef.h>
-#include <stdbool.h>
-#include <stdint.h>
 #include "GxBootloaderHidDevice.h"
 #include "IBootloaderService.h"
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
 
 class IBoard
 {
 #pragma mark Public Members
   public:
+    virtual void Initialise () = 0;
+
     IUsbHidDevice* hidDevice;
 
-    DispatcherActions* dispatcherActions;
+    DispatcherActions BoardDispatcherActions;
 
     IBootloaderService* BootloaderService;
-
 
 #pragma mark Private Members
   private:

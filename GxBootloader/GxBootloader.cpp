@@ -22,59 +22,12 @@
 
 #pragma mark Member Implementations
 GxBootloader::GxBootloader (IBoard& board)
-    : board (board), mainDispatcher (Dispatcher (*board.dispatcherActions)),
+    : board (board), mainDispatcher (Dispatcher (board.BoardDispatcherActions)),
       UsbInterface (GxBootloaderHidDevice (*board.hidDevice, mainDispatcher))
 {
-}
+    Dispatcher::GetMainDispatcher ().BeginInvoke (Action::Create<GxBootloader, &GxBootloader::Initialise> (this));
 
-GxBootloader::~GxBootloader ()
-{
-}
-
-void GxBootloader::InitialiseFlags ()
-{
-    BootloaderFlags flags;
-
-    flags.Version = GxBootloader::Version;
-
-    board.BootloaderService->WriteFlags (&flags);
-}
-
-void GxBootloader::SetState (BootloaderState state)
-{
-    auto flags = *board.BootloaderService->ReadFlags ();
-
-    flags.State = state;
-
-    board.BootloaderService->WriteFlags (&flags);
-}
-
-void GxBootloader::Run ()
-{
-    if (!board.BootloaderService->ReadFlags ()->IsBootloaderPresent ())
-    {
-        InitialiseFlags ();
-    }
-
-    if (board.BootloaderService->ReadFlags ()->Version != Version)
-    {
-        auto flags = *board.BootloaderService->ReadFlags ();
-
-        flags.Version = Version;
-
-        board.BootloaderService->WriteFlags (&flags);
-    }
-
-    if (board.BootloaderService->ReadFlags ()->State == BootloaderState::Normal)
-    {
-        board.BootloaderService->JumpToApplication ();
-
-        SetState (BootloaderState::Bootloader);
-    }
-
-    Initialise ();
-
-    UsbInterface.BootloaderVersionRequested +=
+    /*UsbInterface.BootloaderVersionRequested +=
     [&](void* sender, EventArgs& args)
     {
         UsbInterface.SendBootloaderVersion (GxBootloader::Version);
@@ -129,15 +82,57 @@ void GxBootloader::Run ()
         UsbInterface.Acknowlege (1);
 
         board.BootloaderService->SystemReset ();
-    };
+    };*/
+}
 
-    while (true)
-    {
-        mainDispatcher.RunSingle ();
-    }
+GxBootloader::~GxBootloader ()
+{
+}
+
+void GxBootloader::InitialiseFlags ()
+{
+    BootloaderFlags flags;
+
+    flags.Version = GxBootloader::Version;
+
+    board.BootloaderService->WriteFlags (&flags);
+}
+
+void GxBootloader::SetState (BootloaderState state)
+{
+    auto flags = *board.BootloaderService->ReadFlags ();
+
+    flags.State = state;
+
+    board.BootloaderService->WriteFlags (&flags);
+}
+
+void GxBootloader::Run ()
+{
 }
 
 void GxBootloader::Initialise ()
 {
+    if (!board.BootloaderService->ReadFlags ()->IsBootloaderPresent ())
+    {
+        InitialiseFlags ();
+    }
+
+    if (board.BootloaderService->ReadFlags ()->Version != Version)
+    {
+        auto flags = *board.BootloaderService->ReadFlags ();
+
+        flags.Version = Version;
+
+        board.BootloaderService->WriteFlags (&flags);
+    }
+
+    if (board.BootloaderService->ReadFlags ()->State == BootloaderState::Normal)
+    {
+        board.BootloaderService->JumpToApplication ();
+
+        SetState (BootloaderState::Bootloader);
+    }
+
     board.hidDevice->InitialiseStack ();
 }

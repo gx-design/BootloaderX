@@ -1,0 +1,21 @@
+{
+  "StartupItem": "ProductionBoardA",
+  "Projects": [
+    "ArmSystem/ArmSystem.acproj",
+    "CommonHal/CommonHal.acproj",
+    "Dispatcher/Dispatcher.acproj",
+    "GxInstrumentationHidDevice/GxInstrumentationHidDevice.acproj",
+    "IntegratedDebugProtocol/IntegratedDebugProtocol.acproj",
+    "STM32HalPlatform/STM32HalPlatform.acproj",
+    "Utils/Utils.acproj",
+    "GxBootloader/GxBootloader.acproj",
+    "STM32F4Cube/Middlewares/ST/STM32_USB_Device_Library/STM32_USB_Device_Library.acproj",
+    "STM32F4Cube/Drivers/STM32F4xx_HAL_Driver/STM32F4xx_HAL_Driver.acproj",
+    "STM32F4Cube/Drivers/CMSIS/CMSIS.acproj",
+    "ProductionBoardA/ProductionBoardA.acproj",
+    "BTPlusPlus/BTPlusPlus.acproj",
+    "FreeRTOS/FreeRTOS.acproj",
+    "STM32F4Cube/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/FreeRTOSArmCM4F.acproj"
+  ],
+  "Name": "GxBootloader"
+}
