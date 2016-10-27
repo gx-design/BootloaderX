@@ -202,29 +202,40 @@ void ProductionBoardA::EnableInterrupts ()
 
 bool ProductionBoardA::ForceBootloadRequested ()
 {
-    return false;
+    bool button1Held = HAL_GPIO_ReadPin (Button1.Port, Button1.Pin) == GPIO_PIN_RESET;
+    bool button2Held = HAL_GPIO_ReadPin (Button2.Port, Button2.Pin) == GPIO_PIN_RESET;
     bool button3Held = HAL_GPIO_ReadPin (Button3.Port, Button3.Pin) == GPIO_PIN_RESET;
+    bool button4Held = HAL_GPIO_ReadPin (Button4.Port, Button4.Pin) == GPIO_PIN_RESET;
 
-    while (button3Held && Kernel::GetSystemTime () < 5500)
+    while (!button1Held && button2Held && button3Held && !button4Held && Kernel::GetSystemTime () < 5000)
     {
+        button1Held = HAL_GPIO_ReadPin (Button1.Port, Button1.Pin) == GPIO_PIN_RESET;
+        button2Held = HAL_GPIO_ReadPin (Button2.Port, Button2.Pin) == GPIO_PIN_RESET;
         button3Held = HAL_GPIO_ReadPin (Button3.Port, Button3.Pin) == GPIO_PIN_RESET;
+        button4Held = HAL_GPIO_ReadPin (Button4.Port, Button4.Pin) == GPIO_PIN_RESET;
     }
 
-    if (!button3Held)
+    if (!(!button1Held && button2Held && button3Held && !button4Held))
     {
         return false;
     }
 
-    bool button2Held = HAL_GPIO_ReadPin (Button2.Port, Button2.Pin) == GPIO_PIN_RESET;
+    Thread::Sleep (1000);
 
-    while (button2Held && button3Held && Kernel::GetSystemTime () < 11000)
+    button1Held = HAL_GPIO_ReadPin (Button1.Port, Button1.Pin) == GPIO_PIN_RESET;
+    button2Held = HAL_GPIO_ReadPin (Button2.Port, Button2.Pin) == GPIO_PIN_RESET;
+    button3Held = HAL_GPIO_ReadPin (Button3.Port, Button3.Pin) == GPIO_PIN_RESET;
+    button4Held = HAL_GPIO_ReadPin (Button4.Port, Button4.Pin) == GPIO_PIN_RESET;
+
+    while (!button1Held && !button2Held && button3Held && !button4Held && Kernel::GetSystemTime () < 11000)
     {
-        button3Held = HAL_GPIO_ReadPin (Button3.Port, Button3.Pin) == GPIO_PIN_RESET;
-
+        button1Held = HAL_GPIO_ReadPin (Button1.Port, Button1.Pin) == GPIO_PIN_RESET;
         button2Held = HAL_GPIO_ReadPin (Button2.Port, Button2.Pin) == GPIO_PIN_RESET;
+        button3Held = HAL_GPIO_ReadPin (Button3.Port, Button3.Pin) == GPIO_PIN_RESET;
+        button4Held = HAL_GPIO_ReadPin (Button4.Port, Button4.Pin) == GPIO_PIN_RESET;
     }
 
-    if (!button2Held || !button3Held)
+    if (!(!button1Held && !button2Held && button3Held && !button4Held))
     {
         return false;
     }
