@@ -26,5 +26,5 @@ extern "C" int main ()
 {
     static auto board = ProductionBoardA (); //!< Instance of the board interface.
     
-    (*new App (board)).Run ();
+    (*new App (board, 0x3A52C6E8)).Run ();
 }

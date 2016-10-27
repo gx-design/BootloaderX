@@ -10,17 +10,17 @@
 #define _GXBOOTLOADER_H_
 
 #pragma mark Includes
-#include <stddef.h>
-#include <stdbool.h>
-#include <stdint.h>
-#include "IBoard.h"
 #include "GxBootloaderHidDevice.h"
+#include "IBoard.h"
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
 
 class GxBootloader
 {
 #pragma mark Public Members
   public:
-    GxBootloader (IBoard& board);
+    GxBootloader (IBoard& board, uint32_t encryptionKey);
     ~GxBootloader ();
 
     const float Version = 0.89;
@@ -28,16 +28,22 @@ class GxBootloader
     void Run (void);
     void Initialise (void);
 
+    GxBootloaderHidDevice UsbInterface;
+
+    void SetState (BootloaderState state);
+
+    static uint32_t EncryptDecrypt (uint32_t key, uint32_t& scrambleKey, uint32_t data);
+
+    uint32_t currentAddress;
+    uint32_t scrambleKey;
+    uint32_t encryptionKey;
+
 
 #pragma mark Private Members
   private:
     IBoard& board;
-    Dispatcher mainDispatcher;
-    GxBootloaderHidDevice UsbInterface;
-    uint32_t currentAddress;
 
     void InitialiseFlags ();
-    void SetState (BootloaderState state);
 };
 
 #endif

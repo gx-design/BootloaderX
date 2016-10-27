@@ -25,9 +25,9 @@ uint32_t HAL_GetTick (void)
 }
 }
 
-static const PortPin OutputPins[] = {
-    LED1, LED2, LED3,
-};
+static const PortPin OutputPins[] = { LED1, LED2, LED3 };
+
+static const PortPin InputPins[] = { Button1, Button2, Button3, Button4 };
 
 static void SystemClock_Config (void)
 {
@@ -70,6 +70,17 @@ static void InitialiseAnalogInputPin (const PortPin& portPin)
     memset (&init, 0, sizeof (GPIO_InitTypeDef));
 
     init.Mode = GPIO_MODE_ANALOG;
+    init.Pull = GPIO_NOPULL;
+
+    InitialisePin (init, portPin);
+}
+
+static void InitialiseInputPin (const PortPin& portPin)
+{
+    GPIO_InitTypeDef init;
+    memset (&init, 0, sizeof (GPIO_InitTypeDef));
+
+    init.Mode = GPIO_MODE_INPUT;
     init.Pull = GPIO_NOPULL;
 
     InitialisePin (init, portPin);
@@ -124,6 +135,14 @@ static void InitialiseOutputPins ()
     }
 }
 
+static void InitialiseInputPins ()
+{
+    for (uint32_t i = 0; i < (sizeof (InputPins) / sizeof (PortPin)); i++)
+    {
+        InitialiseInputPin (InputPins[i]);
+    }
+}
+
 static void InitialiseGPIO (void)
 {
     /* GPIO Ports Clock Enable */
@@ -141,6 +160,8 @@ static void InitialiseGPIO (void)
     ResetPins ();
 
     InitialiseOutputPins ();
+
+    InitialiseInputPins ();
 }
 
 
@@ -177,6 +198,38 @@ void ProductionBoardA::DisableInterrupts ()
 void ProductionBoardA::EnableInterrupts ()
 {
     __enable_irq ();
+}
+
+bool ProductionBoardA::ForceBootloadRequested ()
+{
+    return false;
+    bool button3Held = HAL_GPIO_ReadPin (Button3.Port, Button3.Pin) == GPIO_PIN_RESET;
+
+    while (button3Held && Kernel::GetSystemTime () < 5500)
+    {
+        button3Held = HAL_GPIO_ReadPin (Button3.Port, Button3.Pin) == GPIO_PIN_RESET;
+    }
+
+    if (!button3Held)
+    {
+        return false;
+    }
+
+    bool button2Held = HAL_GPIO_ReadPin (Button2.Port, Button2.Pin) == GPIO_PIN_RESET;
+
+    while (button2Held && button3Held && Kernel::GetSystemTime () < 11000)
+    {
+        button3Held = HAL_GPIO_ReadPin (Button3.Port, Button3.Pin) == GPIO_PIN_RESET;
+
+        button2Held = HAL_GPIO_ReadPin (Button2.Port, Button2.Pin) == GPIO_PIN_RESET;
+    }
+
+    if (!button2Held || !button3Held)
+    {
+        return false;
+    }
+
+    return true;
 }
 
 /*void ProductionBoardA::SetLED1 ()

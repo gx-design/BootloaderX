@@ -9,7 +9,10 @@
 
 
 #pragma mark Includes
+#include "CRC.h"
+#include "Comms/CommsHandlers.h"
 #include "GxBootloader.h"
+#include "Kernel.h"
 
 #pragma mark Definitions and Constants
 
@@ -21,10 +24,10 @@
 
 
 #pragma mark Member Implementations
-GxBootloader::GxBootloader (IBoard& board)
-    : board (board), mainDispatcher (Dispatcher (board.BoardDispatcherActions)),
-      UsbInterface (GxBootloaderHidDevice (*board.hidDevice, mainDispatcher))
+GxBootloader::GxBootloader (IBoard& board, uint32_t encryptionKey)
+    : board (board), UsbInterface (GxBootloaderHidDevice (*board.hidDevice))
 {
+    this->encryptionKey = encryptionKey;
     Dispatcher::GetMainDispatcher ().BeginInvoke (Action::Create<GxBootloader, &GxBootloader::Initialise> (this));
 
     /*UsbInterface.BootloaderVersionRequested +=
@@ -127,7 +130,11 @@ void GxBootloader::Initialise ()
         board.BootloaderService->WriteFlags (&flags);
     }
 
-    if (board.BootloaderService->ReadFlags ()->State == BootloaderState::Normal)
+    if (board.ForceBootloadRequested ())
+    {
+        SetState (BootloaderState::Bootloader);
+    }
+    else if (board.BootloaderService->ReadFlags ()->State == BootloaderState::Normal)
     {
         board.BootloaderService->JumpToApplication ();
 
@@ -135,4 +142,35 @@ void GxBootloader::Initialise ()
     }
 
     board.hidDevice->InitialiseStack ();
+
+    new CommsHandlers (*this, *board.BootloaderService);
+}
+
+uint32_t GxBootloader::EncryptDecrypt (uint32_t key, uint32_t& scrambleKey, uint32_t data)
+{
+    uint8_t* scrambleBytes = reinterpret_cast<uint8_t*> (&scrambleKey);
+
+    uint16_t crc = static_cast<uint16_t> (scrambleKey);
+
+    for (int i = 0; i < sizeof (uint32_t); i++)
+    {
+        crc = CRC::Crc16 (crc, *scrambleBytes++);
+    }
+
+    scrambleKey = scrambleKey & 0xFFFF0000;
+    scrambleKey |= crc;
+
+    scrambleBytes = reinterpret_cast<uint8_t*> (&scrambleKey);
+
+    crc = static_cast<uint16_t> (scrambleKey);
+
+    for (int i = 0; i < sizeof (uint32_t); i++)
+    {
+        crc = CRC::Crc16 (crc, *scrambleBytes++);
+    }
+
+    scrambleKey = scrambleKey & 0x0000FFFF;
+    scrambleKey |= ((uint32_t)crc) << 16;
+
+    return data ^ key ^ scrambleKey;
 }

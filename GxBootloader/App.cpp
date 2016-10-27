@@ -22,8 +22,9 @@
 
 
 #pragma mark Member Implementations
-App::App (IBoard& board) : _board (board)
+App::App (IBoard& board, uint32_t encryptionKey) : _board (board)
 {
+    _encryptionKey = encryptionKey;
 }
 
 
@@ -34,7 +35,7 @@ void App::OnBeforeStartup ()
 void App::OnStartup ()
 {
     _board.Initialise ();
-    new GxBootloader (_board);
+    new GxBootloader (_board, _encryptionKey);
 }
 
 DispatcherActions& App::GetDispatcherActions ()

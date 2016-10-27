@@ -25,7 +25,7 @@ static const uint16_t productId = 0x0001;
 
 
 #pragma mark Member Implementations
-GxBootloaderHidDevice::GxBootloaderHidDevice (IUsbHidDevice& hidDevice, Dispatcher& mainDispatcher)
+GxBootloaderHidDevice::GxBootloaderHidDevice (IUsbHidDevice& hidDevice)
     : GxInstrumentationHidDevice (hidDevice, vendorId, productId), router (*new IDPRouter ()),
       stack (IDPStack::CreateIDPStack (1, NULL, router))
 {
@@ -35,6 +35,11 @@ GxBootloaderHidDevice::GxBootloaderHidDevice (IUsbHidDevice& hidDevice, Dispatch
 
 GxBootloaderHidDevice::~GxBootloaderHidDevice ()
 {
+}
+
+IDPCommandManager& GxBootloaderHidDevice::GetCommandManager () 
+{
+    return stack.GetCommandManager ();
 }
 
 void GxBootloaderHidDevice::OnDataReceived (void* sender, EventArgs& e)

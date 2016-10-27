@@ -28,7 +28,7 @@ class App : public Application
      * Instantiates a new instance of App.
      * @param board - a reference to the board interface for this platform.
      */
-    App (IBoard& board);
+    App (IBoard& board, uint32_t encryptionKey);
 
 #pragma mark Application Implementation
     void OnBeforeStartup ();
@@ -40,6 +40,7 @@ class App : public Application
 #pragma mark Private Members
   private:
     IBoard& _board; //!< A reference to the board interface.
+    uint32_t _encryptionKey;
 };
 
 #endif

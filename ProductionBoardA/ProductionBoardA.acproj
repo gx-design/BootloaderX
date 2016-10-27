@@ -121,8 +121,8 @@
         "CustomFlags": "-target arm-none-eabi -mcpu=cortex-m4 -mthumb -Wno-parentheses-equality -Wno-ignored-attributes",
         "CLanguageStandard": "Default",
         "CppLanguageStandard": "Cpp14",
-        "Optimization": "Debug",
-        "OptimizationPreference": "None",
+        "Optimization": "None",
+        "OptimizationPreference": "Speed",
         "Fpu": "Hard"
       },
       "LinkSettings": {

@@ -28,6 +28,8 @@ class IBoard
 
     IBootloaderService* BootloaderService;
 
+    virtual bool ForceBootloadRequested () = 0;
+
 #pragma mark Private Members
   private:
 };

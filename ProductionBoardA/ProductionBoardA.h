@@ -11,6 +11,8 @@ class ProductionBoardA : public IBoard
     void Initialise ();
     static void DisableInterrupts ();
     static void EnableInterrupts ();
+
+    bool ForceBootloadRequested ();
 };
 
 #endif

@@ -29,9 +29,11 @@ class GxBootloaderHidDevice : public GxInstrumentationHidDevice
 {
 #pragma mark Public Members
   public:
-    GxBootloaderHidDevice (IUsbHidDevice& hidDevice, Dispatcher& mainDispatcher);
+    GxBootloaderHidDevice (IUsbHidDevice& hidDevice);
 
     ~GxBootloaderHidDevice ();
+    
+    IDPCommandManager& GetCommandManager ();
 
 #pragma mark Private Members
   private:
