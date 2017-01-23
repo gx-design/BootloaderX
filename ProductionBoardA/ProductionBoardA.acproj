@@ -143,6 +143,40 @@
         "DebugInRam": false,
         "MiscLinkerArguments": "-mcpu=cortex-m4 -mthumb"
       }
+    },
+    "GccToolchainSettings": {
+      "CompileSettings": {
+        "Defines": [],
+        "Includes": [],
+        "DebugInformation": true,
+        "Rtti": false,
+        "Exceptions": false,
+        "CustomFlags": "-target arm-none-eabi -mcpu=cortex-m4 -mthumb -Wno-parentheses-equality -Wno-ignored-attributes",
+        "CLanguageStandard": "Default",
+        "CppLanguageStandard": "Cpp14",
+        "Optimization": "None",
+        "OptimizationPreference": "Size",
+        "Fpu": "None"
+      },
+      "LinkSettings": {
+        "LinkedLibraries": [],
+        "LinkerScripts": [],
+        "UseMemoryLayout": true,
+        "DiscardUnusedSections": true,
+        "NotUseStandardStartupFiles": true,
+        "Library": "NanoCLib",
+        "SelectedDeviceId": 0,
+        "InRom1Start": 134217728,
+        "InRom1Size": 49152,
+        "InRom2Start": 0,
+        "InRom2Size": 0,
+        "InRam1Start": 536870912,
+        "InRam1Size": 131072,
+        "InRam2Start": 0,
+        "InRam2Size": 0,
+        "DebugInRam": false,
+        "MiscLinkerArguments": "-mcpu=cortex-m4 -mthumb"
+      }
     }
   },
   "DebugSettings": {
