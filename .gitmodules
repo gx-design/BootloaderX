@@ -1,6 +1,3 @@
-[submodule "STM32F4Cube"]
-	path = STM32F4Cube
-	url = git@gxgitlab.int:GXDesign/STM32F4Cube.git
 [submodule "ArmSystem"]
 	path = ArmSystem
 	url = git@gxgitlab.int:GXDesign/ArmSystem.git
@@ -13,9 +10,6 @@
 [submodule "IntegratedDebugProtocol"]
 	path = IntegratedDebugProtocol
 	url = git@gxgitlab.int:GXDesign/IntegratedDebugProtocol.git
-[submodule "STM32HalPlatform"]
-	path = STM32HalPlatform
-	url = git@gxgitlab.int:GXDesign/STM32HalPlatform.git
 [submodule "Utils"]
 	path = Utils
 	url = git@gxgitlab.int:GXDesign/Utils.git
