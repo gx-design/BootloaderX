@@ -30,6 +30,10 @@ class IBoard
 
     virtual bool ForceBootloadRequested () = 0;
 
+    virtual void PostInitialise ()
+    {
+    }
+
 #pragma mark Private Members
   private:
 };

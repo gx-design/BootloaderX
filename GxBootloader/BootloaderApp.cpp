@@ -9,7 +9,7 @@
 
 
 #pragma mark Includes
-#include "App.h"
+#include "BootloaderApp.h"
 #include "GxBootloader.h"
 
 #pragma mark Definitions and Constants
@@ -22,23 +22,23 @@
 
 
 #pragma mark Member Implementations
-App::App (IBoard& board, uint32_t encryptionKey) : _board (board)
+BootloaderApp::BootloaderApp (IBoard& board, uint32_t encryptionKey) : _board (board)
 {
     _encryptionKey = encryptionKey;
 }
 
 
-void App::OnBeforeStartup ()
+void BootloaderApp::OnBeforeStartup ()
 {
 }
 
-void App::OnStartup ()
+void BootloaderApp::OnStartup ()
 {
     _board.Initialise ();
     new GxBootloader (_board, _encryptionKey);
 }
 
-DispatcherActions& App::GetDispatcherActions ()
+DispatcherActions& BootloaderApp::GetDispatcherActions ()
 {
     return _board.BoardDispatcherActions;
 }

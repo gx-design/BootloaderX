@@ -20,7 +20,7 @@
 /**
  * Main App class that implements Application bootstrapping.
  */
-class App : public Application
+class BootloaderApp : public Application
 {
 #pragma mark Public Members
   public:
@@ -28,7 +28,7 @@ class App : public Application
      * Instantiates a new instance of App.
      * @param board - a reference to the board interface for this platform.
      */
-    App (IBoard& board, uint32_t encryptionKey);
+    BootloaderApp (IBoard& board, uint32_t encryptionKey);
 
 #pragma mark Application Implementation
     void OnBeforeStartup ();

@@ -29,63 +29,6 @@ GxBootloader::GxBootloader (IBoard& board, uint32_t encryptionKey)
 {
     this->encryptionKey = encryptionKey;
     Dispatcher::GetMainDispatcher ().BeginInvoke (Action::Create<GxBootloader, &GxBootloader::Initialise> (this));
-
-    /*UsbInterface.BootloaderVersionRequested +=
-    [&](void* sender, EventArgs& args)
-    {
-        UsbInterface.SendBootloaderVersion (GxBootloader::Version);
-    };
-
-    UsbInterface.EraseFirmwareRequested += [&](void* sender, EventArgs& args)
-    {
-        board.BootloaderService->EraseFirmware ();
-
-        currentAddress = 0x0800C000;
-        UsbInterface.Acknowlege (0);
-    };
-
-    UsbInterface.FlashDataRequested += [&](void* sender, EventArgs& args)
-    {
-        auto flashArgs = (FlashDataEventArgs&)args;
-
-        for (uint8_t i = 0; i < flashArgs.length;)
-        {
-            uint8_t remainingSize = flashArgs.length - i;
-
-            if (remainingSize >= 4)
-            {
-                uint32_t* data = (uint32_t*)&flashArgs.data[i];
-                board.BootloaderService->FlashData (currentAddress, *data);
-                i += 4;
-                currentAddress += 4;
-            }
-            else if (remainingSize >= 2)
-            {
-                uint16_t* data = (uint16_t*)&flashArgs.data[i];
-                board.BootloaderService->FlashData (currentAddress, *data);
-                i += 2;
-                currentAddress += 2;
-            }
-            else if (remainingSize >= 1)
-            {
-                board.BootloaderService->FlashData (currentAddress,
-                                                    flashArgs.data[i]);
-                i++;
-                currentAddress++;
-            }
-        }
-
-        UsbInterface.Acknowlege (1);
-    };
-
-    UsbInterface.FinaliseImageRequested += [&](void* sender, EventArgs& args)
-    {
-        SetState (BootloaderState::Normal);
-
-        UsbInterface.Acknowlege (1);
-
-        board.BootloaderService->SystemReset ();
-    };*/
 }
 
 GxBootloader::~GxBootloader ()
@@ -141,6 +84,8 @@ void GxBootloader::Initialise ()
         SetState (BootloaderState::Bootloader);
     }
 
+    board.PostInitialise ();
+
     board.hidDevice->InitialiseStack ();
 
     new CommsHandlers (*this, *board.BootloaderService);
@@ -154,7 +99,7 @@ uint32_t GxBootloader::EncryptDecrypt (uint32_t key, uint32_t& scrambleKey, uint
 
     for (int i = 0; i < sizeof (uint32_t); i++)
     {
-        crc = CRC::Crc16 (crc, *scrambleBytes++);
+        crc = CRC::Crc16 (crc, (int8_t)*scrambleBytes++);
     }
 
     scrambleKey = scrambleKey & 0xFFFF0000;
@@ -166,7 +111,7 @@ uint32_t GxBootloader::EncryptDecrypt (uint32_t key, uint32_t& scrambleKey, uint
 
     for (int i = 0; i < sizeof (uint32_t); i++)
     {
-        crc = CRC::Crc16 (crc, *scrambleBytes++);
+        crc = CRC::Crc16 (crc, (int8_t)*scrambleBytes++);
     }
 
     scrambleKey = scrambleKey & 0x0000FFFF;
