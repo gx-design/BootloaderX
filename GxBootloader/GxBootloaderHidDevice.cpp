@@ -37,7 +37,7 @@ GxBootloaderHidDevice::~GxBootloaderHidDevice ()
 {
 }
 
-IDPCommandManager& GxBootloaderHidDevice::GetCommandManager () 
+IDPCommandManager& GxBootloaderHidDevice::GetCommandManager ()
 {
     return stack.GetCommandManager ();
 }
@@ -55,107 +55,3 @@ void GxBootloaderHidDevice::ProcessDataReceived ()
         stack.GetInterface ().ProcessByte (ReceiveData ());
     }
 }
-
-/*void GxBootloaderHidDevice::Acknowlege (uint8_t command)
-{
-    packet.Reset ();
-    packet.Add (command);
-    packet.Add (true);
-    packet.Finalise ();
-
-    SendData (packet.GetPacket ());
-}
-
-void GxBootloaderHidDevice::SendBootloaderVersion (float version)
-{
-    packet.Reset ();
-    packet.Add ((uint8_t)80);
-    packet.Add (version);
-    packet.Finalise ();
-
-    SendData (packet.GetPacket ());
-}
-
-void GxBootloaderHidDevice::ProcessPacketReceived (void* sender, EventArgs& e)
-{
-    auto command = parser.receiveBuffer->Read ();
-
-    switch (command)
-    {
-    case 0x80: // variable commands
-    {
-        auto settingId = (SettingId)parser.ReadByte ();
-        bool write = parser.ReadBool ();
-
-        if (write)
-        {
-        }
-        else
-        {
-            switch (settingId)
-            {
-            case SettingId::BootloaderVersion:
-                if (BootloaderVersionRequested != nullptr)
-                {
-                    EventArgs args;
-                    BootloaderVersionRequested (this, args);
-                }
-                break;
-
-            default:
-                break;
-            }
-        }
-    }
-    break;
-
-    case 0x81: // bootloader commands
-    {
-        auto flashCmd = parser.ReadByte ();
-
-        switch (flashCmd)
-        {
-        case 0: // begin flash operation.
-        {
-            if (EraseFirmwareRequested != nullptr)
-            {
-                EventArgs args;
-                EraseFirmwareRequested (this, args);
-            }
-        }
-        break;
-
-        case 1:
-        {
-            if (FlashDataRequested != nullptr)
-            {
-                FlashDataEventArgs args;
-                args.length = parser.ReadByte ();
-
-                for (uint32_t i = 0; i < args.length; i++)
-                {
-                    currentFlashData[i] = parser.ReadByte ();
-                }
-
-                args.data = &currentFlashData[0];
-
-                FlashDataRequested (this, args);
-            }
-        }
-        break;
-
-                case 2:
-                {
-                    if (FinaliseImageRequested != nullptr)
-                    {
-                        EventArgs args;
-
-                        FinaliseImageRequested (this, args);
-                    }
-                }
-                break;
-            }
-        }
-        break;
-    }
-}*/

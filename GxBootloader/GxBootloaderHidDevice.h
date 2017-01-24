@@ -32,7 +32,7 @@ class GxBootloaderHidDevice : public GxInstrumentationHidDevice
     GxBootloaderHidDevice (IUsbHidDevice& hidDevice);
 
     ~GxBootloaderHidDevice ();
-    
+
     IDPCommandManager& GetCommandManager ();
 
 #pragma mark Private Members
