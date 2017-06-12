@@ -22,9 +22,9 @@ class IBoard
   public:
     virtual void Initialise () = 0;
 
-    IUsbHidDevice* hidDevice;
+    IUsbHidDevice* HidDevice;
 
-    DispatcherActions BoardDispatcherActions;
+    DispatcherActions PlatformDispatcherActions;
 
     IBootloaderService* BootloaderService;
 

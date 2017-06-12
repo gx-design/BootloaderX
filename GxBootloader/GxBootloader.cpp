@@ -25,10 +25,10 @@
 
 #pragma mark Member Implementations
 GxBootloader::GxBootloader (IBoard& board, uint32_t encryptionKey)
-    : board (board), UsbInterface (GxBootloaderHidDevice (*board.hidDevice))
+    : UsbInterface (GxBootloaderHidDevice (*board.HidDevice)), board (board)
 {
     this->encryptionKey = encryptionKey;
-    Dispatcher::GetMainDispatcher ().BeginInvoke (Action::Create<GxBootloader, &GxBootloader::Initialise> (this));
+    Dispatcher::Invoke ([&] { Initialise (); });
 }
 
 GxBootloader::~GxBootloader ()
@@ -86,7 +86,7 @@ void GxBootloader::Initialise ()
 
     board.PostInitialise ();
 
-    board.hidDevice->InitialiseStack ();
+    board.HidDevice->InitialiseStack ();
 
     new CommsHandlers (*this, *board.BootloaderService);
 }

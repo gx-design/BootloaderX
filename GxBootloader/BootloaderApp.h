@@ -28,14 +28,20 @@ class BootloaderApp : public Application
      * Instantiates a new instance of App.
      * @param board - a reference to the board interface for this platform.
      */
-    BootloaderApp (IBoard& board, uint32_t encryptionKey);
+    BootloaderApp (IBoard& board, uint32_t encryptionKey, GetSystemTimeDelegate getSystemTime);
 
 #pragma mark Application Implementation
+    void Run ();
+
     void OnBeforeStartup ();
 
     void OnStartup ();
 
     DispatcherActions& GetDispatcherActions ();
+
+    Dispatcher& GetCurrentDispatcher ();
+
+    void RegisterDispatcherToThread (Dispatcher& dispatcher);
 
 #pragma mark Private Members
   private:

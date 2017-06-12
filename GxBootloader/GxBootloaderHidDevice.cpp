@@ -44,8 +44,7 @@ IDPCommandManager& GxBootloaderHidDevice::GetCommandManager ()
 
 void GxBootloaderHidDevice::OnDataReceived (void* sender, EventArgs& e)
 {
-    Dispatcher::GetMainDispatcher ().BeginInvoke (
-    Action::Create<GxBootloaderHidDevice, &GxBootloaderHidDevice::ProcessDataReceived> (this));
+    Dispatcher::Invoke ([&] { ProcessDataReceived (); });
 }
 
 void GxBootloaderHidDevice::ProcessDataReceived ()
