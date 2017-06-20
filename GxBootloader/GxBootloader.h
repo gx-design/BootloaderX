@@ -23,16 +23,20 @@ class GxBootloader
     GxBootloader (IBoard& board, uint32_t encryptionKey);
     ~GxBootloader ();
 
-    const float Version = 0.89;
+    constexpr static float Version = 0.89;
 
     void Run (void);
     void Initialise (void);
 
     GxBootloaderHidDevice UsbInterface;
 
+    static void SetState (IBoard& board, BootloaderState state);
+
     void SetState (BootloaderState state);
 
     static uint32_t EncryptDecrypt (uint32_t key, uint32_t& scrambleKey, uint32_t data);
+
+    static void InitialiseFlags (IBoard& board);
 
     uint32_t currentAddress;
     uint32_t scrambleKey;
@@ -42,8 +46,6 @@ class GxBootloader
 #pragma mark Private Members
   private:
     IBoard& board;
-
-    void InitialiseFlags ();
 };
 
 #endif

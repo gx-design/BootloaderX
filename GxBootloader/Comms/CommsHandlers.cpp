@@ -35,20 +35,20 @@ CommsHandlers::CommsHandlers (GxBootloader& bootloader, IBootloaderService& boot
     : _bootloader (bootloader), _bootloaderService (bootloaderService),
       _commandManager (bootloader.UsbInterface.GetCommandManager ())
 {
-    _commandManager.RegisterCommand<PingRequestPacket> ()
-    .CommandReceived.Subscribe<CommsHandlers, &CommsHandlers::PingRequestReceived> (this);
+    _commandManager.RegisterCommand<PingRequestPacket> ().CommandReceived +=
+    [&](auto sender, auto& e) { PingRequestReceived (sender, e); };
 
-    _commandManager.RegisterCommand<GetVersionRequestPacket> ()
-    .CommandReceived.Subscribe<CommsHandlers, &CommsHandlers::GetVersionCommandRecieved> (this);
+    _commandManager.RegisterCommand<GetVersionRequestPacket> ().CommandReceived +=
+    [&](auto sender, auto& e) { GetVersionCommandRecieved (sender, e); };
 
-    _commandManager.RegisterCommand<BeginFlashOperationRequest> ()
-    .CommandReceived.Subscribe<CommsHandlers, &CommsHandlers::BeginFlashOperationRequestReceived> (this);
+    _commandManager.RegisterCommand<BeginFlashOperationRequest> ().CommandReceived +=
+    [&](auto sender, auto& e) { BeginFlashOperationRequestReceived (sender, e); };
 
-    _commandManager.RegisterCommand<FlashDataRequestTransaction> ()
-    .CommandReceived.Subscribe<CommsHandlers, &CommsHandlers::FlashDataRequestReceived> (this);
+    _commandManager.RegisterCommand<FlashDataRequestTransaction> ().CommandReceived +=
+    [&](auto sender, auto& e) { FlashDataRequestReceived (sender, e); };
 
-    _commandManager.RegisterCommand<ValidateImageRequestTransaction> ()
-    .CommandReceived.Subscribe<CommsHandlers, &CommsHandlers::ValidateImageRequestReceived> (this);
+    _commandManager.RegisterCommand<ValidateImageRequestTransaction> ().CommandReceived +=
+    [&](auto sender, auto& e) { ValidateImageRequestReceived (sender, e); };
 }
 
 CommsHandlers::~CommsHandlers ()
@@ -83,7 +83,7 @@ void CommsHandlers::GetVersionCommandRecieved (void* sender, EventArgs& e)
     IDPPacket& packet = responseInterface.GetEmptyPacket (1);
 
     GetVersionResponsePacket responsePayload = response.CreateTransaction ();
-    responsePayload.version = _bootloader.Version;
+    responsePayload.version = GxBootloader::Version;
 
     response.Encode (packet, 1, 1, responsePayload);
     _bootloader.UsbInterface.ReportIdpPacket (packet);

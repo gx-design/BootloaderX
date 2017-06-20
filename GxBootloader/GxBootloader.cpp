@@ -35,7 +35,7 @@ GxBootloader::~GxBootloader ()
 {
 }
 
-void GxBootloader::InitialiseFlags ()
+void GxBootloader::InitialiseFlags (IBoard& board)
 {
     BootloaderFlags flags;
 
@@ -44,7 +44,7 @@ void GxBootloader::InitialiseFlags ()
     board.BootloaderService->WriteFlags (&flags);
 }
 
-void GxBootloader::SetState (BootloaderState state)
+void GxBootloader::SetState (IBoard& board, BootloaderState state)
 {
     auto flags = *board.BootloaderService->ReadFlags ();
 
@@ -53,37 +53,17 @@ void GxBootloader::SetState (BootloaderState state)
     board.BootloaderService->WriteFlags (&flags);
 }
 
+void GxBootloader::SetState (BootloaderState state)
+{
+    GxBootloader::SetState (board, state);
+}
+
 void GxBootloader::Run ()
 {
 }
 
 void GxBootloader::Initialise ()
 {
-    if (!board.BootloaderService->ReadFlags ()->IsBootloaderPresent ())
-    {
-        InitialiseFlags ();
-    }
-
-    if (board.BootloaderService->ReadFlags ()->Version != Version)
-    {
-        auto flags = *board.BootloaderService->ReadFlags ();
-
-        flags.Version = Version;
-
-        board.BootloaderService->WriteFlags (&flags);
-    }
-
-    if (board.ForceBootloadRequested ())
-    {
-        SetState (BootloaderState::Bootloader);
-    }
-    else if (board.BootloaderService->ReadFlags ()->State == BootloaderState::Normal)
-    {
-        board.BootloaderService->JumpToApplication ();
-
-        SetState (BootloaderState::Bootloader);
-    }
-
     board.PostInitialise ();
 
     board.HidDevice->InitialiseStack ();

@@ -40,6 +40,31 @@ void BootloaderApp::OnStartup ()
 {
     _board.Initialise ();
 
+    if (!_board.BootloaderService->ReadFlags ()->IsBootloaderPresent ())
+    {
+        GxBootloader::InitialiseFlags (_board);
+    }
+
+    if (_board.BootloaderService->ReadFlags ()->Version != GxBootloader::Version)
+    {
+        auto flags = *_board.BootloaderService->ReadFlags ();
+
+        flags.Version = GxBootloader::Version;
+
+        _board.BootloaderService->WriteFlags (&flags);
+    }
+
+    if (_board.ForceBootloadRequested ())
+    {
+        GxBootloader::SetState (_board, BootloaderState::Bootloader);
+    }
+    else if (_board.BootloaderService->ReadFlags ()->State == BootloaderState::Normal)
+    {
+        _board.BootloaderService->JumpToApplication ();
+
+        GxBootloader::SetState (_board, BootloaderState::Bootloader);
+    }
+
     new GxBootloader (_board, _encryptionKey);
 }
 
@@ -50,10 +75,11 @@ DispatcherActions& BootloaderApp::GetDispatcherActions ()
 
 void BootloaderApp::Run ()
 {
-    Thread::StartNew (Action::Create ([&] { Application::Main (); }), 6000);
-    Thread::StartNew (Action::Create ([&] { Application::PriorityThread (); }), 2000);
+    /*Thread::StartNew ([&] { Application::Main (); }, 6000);
+    Thread::StartNew ([&] { Application::PriorityThread (); }, 2000);
 
-    Kernel::Start ();
+    Kernel::Start ();*/
+    Application::Main ();
 }
 
 

@@ -30,7 +30,7 @@ GxBootloaderHidDevice::GxBootloaderHidDevice (IUsbHidDevice& hidDevice)
       stack (IDPStack::CreateIDPStack (1, NULL, router))
 {
 
-    DataReceived.Subscribe<GxBootloaderHidDevice, &GxBootloaderHidDevice::OnDataReceived> (this);
+    DataReceived += [&](auto sender, auto& e) { OnDataReceived (sender, e); };
 }
 
 GxBootloaderHidDevice::~GxBootloaderHidDevice ()
