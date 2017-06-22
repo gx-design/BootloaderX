@@ -65,6 +65,7 @@ void BootloaderApp::OnStartup ()
         GxBootloader::SetState (_board, BootloaderState::Bootloader);
     }
 
+    _board.PostInitialise ();
     new GxBootloader (_board, _encryptionKey);
 }
 
@@ -75,11 +76,10 @@ DispatcherActions& BootloaderApp::GetDispatcherActions ()
 
 void BootloaderApp::Run ()
 {
-    /*Thread::StartNew ([&] { Application::Main (); }, 6000);
-    Thread::StartNew ([&] { Application::PriorityThread (); }, 2000);
+    Thread::StartNew ([&] { Main (); }, 6000);
+    Thread::StartNew ([&] { PriorityThread (); }, 2000);
 
-    Kernel::Start ();*/
-    Application::Main ();
+    Kernel::Start ();
 }
 
 

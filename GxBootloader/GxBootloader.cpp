@@ -64,8 +64,6 @@ void GxBootloader::Run ()
 
 void GxBootloader::Initialise ()
 {
-    board.PostInitialise ();
-
     board.HidDevice->InitialiseStack ();
 
     new CommsHandlers (*this, *board.BootloaderService);
