@@ -29,7 +29,8 @@ class GxBootloaderHidDevice : public GxInstrumentationHidDevice
 {
 #pragma mark Public Members
   public:
-    GxBootloaderHidDevice (IUsbHidDevice& hidDevice);
+    GxBootloaderHidDevice (IUsbHidDevice& hidDevice, uint16_t vid, uint16_t pid, const char* manufacturerString,
+                           const char* productString, const char* serialString);
 
     ~GxBootloaderHidDevice ();
 

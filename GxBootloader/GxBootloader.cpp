@@ -15,7 +15,11 @@
 #include "Kernel.h"
 
 #pragma mark Definitions and Constants
-
+static const uint16_t vendorId = 0xFC02;
+static const uint16_t productId = 0x0001;
+static const char* manufacturerString = "GX Design";
+static const char* productString = "GX Device Firmware Bootloader";
+static const char* serialString = "00000001";
 
 #pragma mark Static Data
 
@@ -25,7 +29,9 @@
 
 #pragma mark Member Implementations
 GxBootloader::GxBootloader (IBoard& board, uint32_t encryptionKey)
-    : UsbInterface (GxBootloaderHidDevice (*board.HidDevice)), board (board)
+    : UsbInterface (
+      GxBootloaderHidDevice (*board.HidDevice, vendorId, productId, manufacturerString, productString, serialString)),
+      board (board)
 {
     this->encryptionKey = encryptionKey;
     Dispatcher::Invoke ([&] { Initialise (); });

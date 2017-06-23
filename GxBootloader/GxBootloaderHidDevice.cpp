@@ -15,8 +15,6 @@
 #include "IDPStack.h"
 
 #pragma mark Definitions and Constants
-static const uint16_t vendorId = 0xFC01;
-static const uint16_t productId = 0x0001;
 
 #pragma mark Static Data
 
@@ -25,9 +23,11 @@ static const uint16_t productId = 0x0001;
 
 
 #pragma mark Member Implementations
-GxBootloaderHidDevice::GxBootloaderHidDevice (IUsbHidDevice& hidDevice)
-    : GxInstrumentationHidDevice (hidDevice, vendorId, productId), router (*new IDPRouter ()),
-      stack (IDPStack::CreateIDPStack (1, NULL, router))
+GxBootloaderHidDevice::GxBootloaderHidDevice (IUsbHidDevice& hidDevice, uint16_t vid, uint16_t pid,
+                                              const char* manufacturerString, const char* productString,
+                                              const char* serialString)
+    : GxInstrumentationHidDevice (hidDevice, vid, pid, manufacturerString, productString, serialString),
+      router (*new IDPRouter ()), stack (IDPStack::CreateIDPStack (1, NULL, router))
 {
 
     DataReceived += [&](auto sender, auto& e) { OnDataReceived (sender, e); };
