@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFrameworks>netcoreapp2.0</TargetFrameworks>
+    </PropertyGroup>
+    <ItemGroup>
+        <Compile Update="**\*.xaml.cs">
+            <DependentUpon>%(Filename)</DependentUpon>
+        </Compile>
+        <EmbeddedResource Include="**\*.xaml">
+            <SubType>Designer</SubType>
+        </EmbeddedResource>
+    </ItemGroup>
+    <ItemGroup>
+      <None Remove="Controls\MetroWindow.xaml" />
+      <None Remove="Controls\MetroWindowTheme.xaml" />
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Avalonia" Version="0.5.1-build3247-alpha" />
+        <PackageReference Include="Avalonia.Desktop" Version="0.5.1-build3247-alpha" />
+        <PackageReference Include="Serilog.Sinks.Trace" Version="2.1.0" />
+    </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\GreenLightApplicationDevice\GreenLightApplicationDevice.csproj" />
+      <ProjectReference Include="..\GxBootloader\GxBootloader.csproj" />
+    </ItemGroup>
+</Project>

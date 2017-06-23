@@ -22,3 +22,6 @@
 [submodule "BTPlusPlus"]
 	path = BTPlusPlus
 	url = git@gxgitlab.int:GXDesign/BTPlusPlus.git
+[submodule "HidLibrary"]
+	path = HidLibrary
+	url = https://github.com/mikeobrien/HidLibrary.git
