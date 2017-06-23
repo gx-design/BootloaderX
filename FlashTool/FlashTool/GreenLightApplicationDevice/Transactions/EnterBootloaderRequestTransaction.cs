@@ -4,7 +4,7 @@
     using System.Collections.Generic;
     using IntegratedDebugProtocol;
 
-    public class PingRequestTransaction : Transaction
+    public class EnterBootloaderRequestTransaction : Transaction
     {
         public override ushort Id => 0xA000;
 

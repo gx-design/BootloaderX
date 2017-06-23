@@ -140,8 +140,8 @@ namespace GreenLightApplicationDevice
 
         private void InitialiseCommands()
         {
-            commandManager.RegisterCommand<PingRequestTransaction>();
-            commandManager.RegisterCommand<PingResponseTransaction>();
+            commandManager.RegisterCommand<EnterBootloaderRequestTransaction>();
+            commandManager.RegisterCommand<EnterBootloaderResponseTransaction>();
         }
 
         public async Task<bool> Connect()
@@ -164,7 +164,7 @@ namespace GreenLightApplicationDevice
 
         public async Task EnterBootloader()
         {
-            await Transaction<PingRequestTransaction, PingResponseTransaction>(_ => { }, _ => { }, 250);
+            await Transaction<EnterBootloaderRequestTransaction, EnterBootloaderResponseTransaction>(_ => { }, _ => { }, 250);
         }
 
         private async Task Transaction<TRequest, TResponse>(Action<TRequest> setValues, Action<TResponse> getValues, int timeout = 400) where TRequest : Transaction where TResponse : Transaction
