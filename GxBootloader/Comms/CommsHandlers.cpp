@@ -117,7 +117,7 @@ void CommsHandlers::FlashDataRequestReceived (void* sender, EventArgs& e)
 
         if (remainingSize >= 4)
         {
-            uint32_t* data = reinterpret_cast<uint32_t*> (&requestPayload.data[i]);
+            auto data = reinterpret_cast<uint32_t*> (&requestPayload.data[i]);
 
             *data = GxBootloader::EncryptDecrypt (_bootloader.encryptionKey, _bootloader.scrambleKey, *data);
 
@@ -128,7 +128,8 @@ void CommsHandlers::FlashDataRequestReceived (void* sender, EventArgs& e)
         }
         else if (remainingSize >= 2)
         {
-            uint16_t* data = reinterpret_cast<uint16_t*> (&requestPayload.data[i]);
+            // This would be a bug!
+            auto data = reinterpret_cast<uint16_t*> (&requestPayload.data[i]);
 
             _bootloaderService.FlashData (_bootloader.currentAddress, *data);
 
@@ -137,6 +138,7 @@ void CommsHandlers::FlashDataRequestReceived (void* sender, EventArgs& e)
         }
         else
         {
+            // This would be a bug!
             _bootloaderService.FlashData (_bootloader.currentAddress, requestPayload.data[i++]);
             _bootloader.currentAddress++;
         }
