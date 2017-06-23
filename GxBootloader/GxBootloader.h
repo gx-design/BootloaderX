@@ -23,7 +23,7 @@ class GxBootloader
     GxBootloader (IBoard& board, uint32_t encryptionKey);
     ~GxBootloader ();
 
-    constexpr static float Version = 0.89;
+    constexpr static float Version = 1.00;
 
     void Run (void);
     void Initialise (void);
