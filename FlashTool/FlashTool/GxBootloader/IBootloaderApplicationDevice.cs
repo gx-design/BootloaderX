@@ -10,6 +10,8 @@ namespace Gx
     {
         Task EnterBootloader();
 
+        Task<VersionInformation> GetVersion();
+
         Task<bool> Connect();
 
         bool Detect();

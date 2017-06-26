@@ -142,6 +142,9 @@ namespace GreenLightApplicationDevice
         {
             commandManager.RegisterCommand<EnterBootloaderRequestTransaction>();
             commandManager.RegisterCommand<EnterBootloaderResponseTransaction>();
+
+            commandManager.RegisterCommand<GetVersionRequestTransaction>();
+            commandManager.RegisterCommand<GetVersionResponseTransaction>();
         }
 
         public async Task<bool> Connect()
@@ -263,6 +266,25 @@ namespace GreenLightApplicationDevice
             }
 
             configurationCommsThread.InvokeTaskAsync(ReceiveFeatureReport);
+        }
+
+        public async Task<VersionInformation> GetVersion()
+        {
+            VersionInformation result = null;
+
+            await Transaction<GetVersionRequestTransaction, GetVersionResponseTransaction>(req => 
+            {
+            }, 
+            resp => 
+            {
+                result = new VersionInformation
+                {
+                    ApplicationVersion = resp.Version,
+                    BootloaderVersion = resp.BootloaderVersion
+                };
+            });
+
+            return result;
         }
     }
 }

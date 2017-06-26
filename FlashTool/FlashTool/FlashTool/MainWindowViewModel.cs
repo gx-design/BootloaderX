@@ -29,6 +29,8 @@ namespace GxFlash
 
         private IObservable<BootloaderConnectionState> _connectionState;
 
+
+        private string _version;
         private bool isFlashing;
         private PropertyHelper<double> progressProperty;
         private PropertyHelper<string> connectionStatusProperty;
@@ -60,7 +62,7 @@ namespace GxFlash
 
             this.connectionStateProperty = _connectionState.ObserveOnUi().ToObservableProperty(this, x => x.ConnectionState);
 
-            this.connectionStatusProperty = _connectionState.Select(c =>
+            var connectionState = _connectionState.Select(c =>
             {
                 _currentConnectionState = c;
 
@@ -76,8 +78,41 @@ namespace GxFlash
                     case BootloaderConnectionState.Bootloader:
                         return "Connected (Bootloader)";
                 }
-            }).ObserveOnUi().ToObservableProperty(this, x=>x.ConnectionStatus);
+            }).ObserveOnUi();
 
+            this.connectionStatusProperty = connectionState.ToObservableProperty(this, x=>x.ConnectionStatus);
+
+            _connectionState.Subscribe(async s =>
+            {
+                    switch (s)
+                    {
+                        case BootloaderConnectionState.Application:
+                            {
+                                var versionInfo = await applicationDevice.GetVersion();
+
+                                Dispatcher.UIThread.InvokeAsync(() =>
+                                {
+                                    Version = $"BL: {versionInfo?.BootloaderVersion:F2}, FW: {versionInfo?.ApplicationVersion:F2}";
+                                });
+                            }
+                            break;
+
+                        case BootloaderConnectionState.Bootloader:
+                            {
+                                var versionInfo = await bootloader.GetVersion();
+
+                                Dispatcher.UIThread.InvokeAsync(() =>
+                                {
+                                    Version = $"BL: {versionInfo?.BootloaderVersion:F2}";
+                                });
+                            }
+                            break;
+
+                        case BootloaderConnectionState.Disconnected:
+                            Version = string.Empty;
+                            break;
+                    }
+            });
 
             progressProperty = bootloader.FlashStatus.Select(status =>
             {
@@ -156,5 +191,10 @@ namespace GxFlash
             set { this.RaiseAndSetIfChanged(ref isFlashing, value); }
         }
 
+        public string Version
+        {
+            get { return _version; }
+            set { this.RaiseAndSetIfChanged(ref _version, value); }
+        }
     }
 }

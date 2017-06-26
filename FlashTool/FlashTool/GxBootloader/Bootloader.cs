@@ -157,7 +157,10 @@ namespace GX
 
                     lock (flashLock)
                     {
-                        FlashData(currentLine);
+                        if(!FlashData(currentLine))
+                        {
+                            Console.WriteLine("Error");
+                        }
                     }
 
                     totalWritten += (uint)currentLine.Length;
@@ -172,6 +175,25 @@ namespace GX
             bool result = false;
 
             await Transaction<ValidateImageRequestTransaction, ValidateImageResponseTransaction>(req => { }, resp => { result = resp.Success; });
+
+            return result;
+        }
+
+        public async Task<VersionInformation> GetVersion()
+        {
+            VersionInformation result = null;
+
+            await Transaction<GetVersionRequestTransaction, GetVersionResponseTransaction>(req =>
+            {
+            },
+            resp =>
+            {
+                result = new VersionInformation
+                {
+                    ApplicationVersion = resp.Version,
+                    BootloaderVersion = resp.BootloaderVersion
+                };
+            });
 
             return result;
         }
@@ -213,6 +235,9 @@ namespace GX
 
             commandManager.RegisterCommand<ValidateImageRequestTransaction>();
             commandManager.RegisterCommand<ValidateImageResponseTransaction>();
+
+            commandManager.RegisterCommand<GetVersionRequestTransaction>();
+            commandManager.RegisterCommand<GetVersionResponseTransaction>();
         }
 
         private async Task Transaction<TRequest, TResponse>(Action<TRequest> setValues, Action<TResponse> getValues, int timeout = 400) where TRequest : Transaction where TResponse : Transaction
@@ -250,7 +275,7 @@ namespace GX
 
             command.CommandReceived += commandReceivedHandler;
 
-            configurationCommsThread.InvokeAsync(() =>
+            await configurationCommsThread.InvokeTaskAsync(() =>
             {
                 packet.Insert(0, (byte)packet.Count);
                 packet.Insert(0, 0x01);
@@ -300,6 +325,8 @@ namespace GX
                 configurationDevice.OpenDevice();
 
                 await StartComms();
+
+                await GetVersion();
 
                 return true;
             }

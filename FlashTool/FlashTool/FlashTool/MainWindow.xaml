@@ -11,6 +11,7 @@
       <StackPanel Orientation="Horizontal" Gap="4">
         <TextBlock Text="Status:" />
         <TextBlock Text="{Binding ConnectionStatus, FallbackValue=Disconnected}" />
+        <TextBlock Text="{Binding Version, FallbackValue=Version}" />
       </StackPanel>
     </DockPanel>
   </Grid>
