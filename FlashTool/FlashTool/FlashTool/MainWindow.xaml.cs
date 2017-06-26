@@ -19,6 +19,12 @@ namespace FlashTool
             var bagSealer = new BagSealer();
 
             DataContext = new MainWindowViewModel(bootloader, bagSealer);
+
+            Closed += (sender, e) =>
+            {
+                bootloader.Disconnect();
+                bagSealer.Disconnect();
+            };
         }
 
         private void InitializeComponent()

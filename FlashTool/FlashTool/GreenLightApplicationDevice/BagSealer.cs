@@ -49,6 +49,11 @@ namespace GreenLightApplicationDevice
             isConnected.OnNext(false);
         }
 
+        public void Disconnect()
+        {
+            cancellationSource?.Cancel();
+        }
+
         public bool Detect()
         {
             bool result = true;
@@ -149,8 +154,6 @@ namespace GreenLightApplicationDevice
 
         public async Task<bool> Connect()
         {
-            cancellationSource = new CancellationTokenSource();
-
             if (configurationDevice != null)
             {
                 configurationDevice.OpenDevice();
@@ -228,6 +231,9 @@ namespace GreenLightApplicationDevice
 
         private async Task StartComms()
         {
+            cancellationSource?.Cancel();
+            cancellationSource = new CancellationTokenSource();
+
             TaskCompletionSource<JobRunner> inputDeviceThreadStarted = new TaskCompletionSource<JobRunner>();
             TaskCompletionSource<JobRunner> configurationThreadStarted = new TaskCompletionSource<JobRunner>();
 

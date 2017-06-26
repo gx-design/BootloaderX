@@ -318,8 +318,6 @@ namespace GX
 
         public async Task<bool> Connect()
         {
-            cancellationSource = new CancellationTokenSource();
-
             if (configurationDevice != null)
             {
                 configurationDevice.OpenDevice();
@@ -334,13 +332,16 @@ namespace GX
             return false;
         }
 
-        public async Task Disconnect()
+        public void Disconnect()
         {
-
+            cancellationSource?.Cancel();
         }
 
         private async Task StartComms()
         {
+            cancellationSource?.Cancel();
+            cancellationSource = new CancellationTokenSource();
+
             TaskCompletionSource<JobRunner> inputDeviceThreadStarted = new TaskCompletionSource<JobRunner>();
             TaskCompletionSource<JobRunner> configurationThreadStarted = new TaskCompletionSource<JobRunner>();
 
