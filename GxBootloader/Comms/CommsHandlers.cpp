@@ -10,16 +10,7 @@
 
 #pragma mark Includes
 #include "CommsHandlers.h"
-#include "Transactions/BeginFlashOperationRequest.h"
-#include "Transactions/BeginFlashOperationResponseTransaction.h"
-#include "Transactions/FlashDataRequestTransaction.h"
-#include "Transactions/FlashDataResponseTransaction.h"
-#include "Transactions/GetVersionRequestTransaction.h"
-#include "Transactions/GetVersionResponseTransaction.h"
-#include "Transactions/PingRequestTransaction.h"
-#include "Transactions/PingResponseTransaction.h"
-#include "Transactions/ValidateImageRequestTransaction.h"
-#include "Transactions/ValidateImageResponseTransaction.h"
+#include "Thread.h"
 
 #pragma mark Definitions and Constants
 
@@ -35,142 +26,79 @@ CommsHandlers::CommsHandlers (GxBootloader& bootloader, IBootloaderService& boot
     : _bootloader (bootloader), _bootloaderService (bootloaderService),
       _commandManager (bootloader.UsbInterface.GetCommandManager ())
 {
-    _commandManager.RegisterCommand<PingRequestPacket> ().CommandReceived +=
-    [&](auto sender, auto& e) { PingRequestReceived (sender, e); };
+    // clang-format off
+    _commandManager.CreateTransaction (0xA002).OnReceived ([&](auto& packet, auto& response) 
+    {
+          response.Write(0.0f);
+          response.Write(GxBootloader::Version);
+          
+          response.Finalise();
+    });
+    
+    _commandManager.CreateTransaction (0xB004).OnReceived([&](auto& packet, auto& response)
+    {
+        _bootloaderService.EraseFirmware ();
+        _bootloader.currentAddress = 0x08010000;
+        _bootloader.scrambleKey = _bootloader.encryptionKey;
+    
+        response.Finalise();        
+    });
+    
+    _commandManager.CreateTransaction (0xB006).OnReceived([&](Buffer& packet, auto& response)
+    {
+        bool result = true;
+        
+        auto length = packet.Read<uint8_t>(); 
+        
+        for (uint8_t i = 0; i < length;)
+        {
+            uint8_t remainingSize = length - i;
+    
+            if (remainingSize >= 4)
+            {
+                auto data = packet.Read<uint32_t>();
+    
+                data = GxBootloader::EncryptDecrypt (_bootloader.encryptionKey, _bootloader.scrambleKey, data);
+    
+                _bootloaderService.FlashData (_bootloader.currentAddress, data);
+    
+                i += sizeof (uint32_t);
+                _bootloader.currentAddress += sizeof (uint32_t);
+            }
+            else if (remainingSize >= 2)
+            {
+                result = false;
+                // This would be a bug!
+                auto data = packet.Read<uint16_t>();
+    
+                _bootloaderService.FlashData (_bootloader.currentAddress, data);
+    
+                i += sizeof (uint16_t);
+                _bootloader.currentAddress += sizeof (uint16_t);
+            }
+            else
+            {
+                result = false;
+                // This would be a bug!
+                auto data = packet.Read<uint8_t>();
+                _bootloaderService.FlashData (_bootloader.currentAddress, data);
+                _bootloader.currentAddress++;
+            }
+        }
 
-    _commandManager.RegisterCommand<GetVersionRequestPacket> ().CommandReceived +=
-    [&](auto sender, auto& e) { GetVersionCommandRecieved (sender, e); };
+        response.Write(result);
+        response.Finalise();
+    });
+    
+    _commandManager.CreateTransaction (0xB008).OnReceived([&](auto& packet, auto& response)
+    {
+        _bootloader.SetState (BootloaderState::Normal);    
+        _bootloaderService.SystemReset ();
+    });
 
-    _commandManager.RegisterCommand<BeginFlashOperationRequest> ().CommandReceived +=
-    [&](auto sender, auto& e) { BeginFlashOperationRequestReceived (sender, e); };
-
-    _commandManager.RegisterCommand<FlashDataRequestTransaction> ().CommandReceived +=
-    [&](auto sender, auto& e) { FlashDataRequestReceived (sender, e); };
-
-    _commandManager.RegisterCommand<ValidateImageRequestTransaction> ().CommandReceived +=
-    [&](auto sender, auto& e) { ValidateImageRequestReceived (sender, e); };
+    // clang-format on
 }
 
 CommsHandlers::~CommsHandlers ()
 {
-}
-
-void CommsHandlers::BeginFlashOperationRequestReceived (void* sender, EventArgs& e)
-{
-    Command<BeginFlashOperationRequest>& request = *static_cast<Command<BeginFlashOperationRequest>*> (sender);
-    Command<BeginFlashOperationResponseTransaction> response;
-
-    _bootloaderService.EraseFirmware ();
-    _bootloader.currentAddress = 0x08010000;
-
-    IDPInterface& responseInterface = request.GetReceivedInterface ();
-    IDPPacket& packet = responseInterface.GetEmptyPacket (1);
-
-    BeginFlashOperationResponseTransaction responsePayload = response.CreateTransaction ();
-
-    response.Encode (packet, 1, 1, responsePayload);
-    _bootloader.UsbInterface.ReportIdpPacket (packet);
-
-    _bootloader.scrambleKey = _bootloader.encryptionKey;
-}
-
-void CommsHandlers::GetVersionCommandRecieved (void* sender, EventArgs& e)
-{
-    Command<GetVersionRequestPacket>& request = *static_cast<Command<GetVersionRequestPacket>*> (sender);
-    Command<GetVersionResponsePacket> response;
-
-    IDPInterface& responseInterface = request.GetReceivedInterface ();
-    IDPPacket& packet = responseInterface.GetEmptyPacket (1);
-
-    GetVersionResponsePacket responsePayload = response.CreateTransaction ();
-    responsePayload.version = GxBootloader::Version;
-
-    response.Encode (packet, 1, 1, responsePayload);
-    _bootloader.UsbInterface.ReportIdpPacket (packet);
-}
-
-void CommsHandlers::PingRequestReceived (void* sender, EventArgs& e)
-{
-    Command<PingRequestPacket>& request = *static_cast<Command<PingRequestPacket>*> (sender);
-    Command<PingResponsePacket> response;
-
-    IDPInterface& responseInterface = request.GetReceivedInterface ();
-    IDPPacket& packet = responseInterface.GetEmptyPacket (1);
-
-    PingResponsePacket responsePayload = response.CreateTransaction ();
-    responsePayload.pingId = request.GetReceivedPayload ().pingId;
-    response.Encode (packet, 1, 1, responsePayload);
-
-    _bootloader.UsbInterface.ReportIdpPacket (packet);
-}
-
-void CommsHandlers::FlashDataRequestReceived (void* sender, EventArgs& e)
-{
-    Command<FlashDataRequestTransaction>& request = *static_cast<Command<FlashDataRequestTransaction>*> (sender);
-    Command<FlashDataResponseTransaction> response;
-
-    FlashDataRequestTransaction& requestPayload = request.GetReceivedPayload ();
-
-    for (uint8_t i = 0; i < requestPayload.length;)
-    {
-        uint8_t remainingSize = requestPayload.length - i;
-
-        if (remainingSize >= 4)
-        {
-            auto data = reinterpret_cast<uint32_t*> (&requestPayload.data[i]);
-
-            *data = GxBootloader::EncryptDecrypt (_bootloader.encryptionKey, _bootloader.scrambleKey, *data);
-
-            _bootloaderService.FlashData (_bootloader.currentAddress, *data);
-
-            i += sizeof (uint32_t);
-            _bootloader.currentAddress += sizeof (uint32_t);
-        }
-        else if (remainingSize >= 2)
-        {
-            // This would be a bug!
-            auto data = reinterpret_cast<uint16_t*> (&requestPayload.data[i]);
-
-            _bootloaderService.FlashData (_bootloader.currentAddress, *data);
-
-            i += sizeof (uint16_t);
-            _bootloader.currentAddress += sizeof (uint16_t);
-        }
-        else
-        {
-            // This would be a bug!
-            _bootloaderService.FlashData (_bootloader.currentAddress, requestPayload.data[i++]);
-            _bootloader.currentAddress++;
-        }
-    }
-
-    IDPInterface& responseInterface = request.GetReceivedInterface ();
-    IDPPacket& packet = responseInterface.GetEmptyPacket (1);
-
-    FlashDataResponseTransaction responsePayload = response.CreateTransaction ();
-
-    responsePayload.success = true;
-
-    response.Encode (packet, 1, 1, responsePayload);
-    _bootloader.UsbInterface.ReportIdpPacket (packet);
-}
-
-void CommsHandlers::ValidateImageRequestReceived (void* sender, EventArgs& e)
-{
-    Command<ValidateImageRequestTransaction>& request =
-    *static_cast<Command<ValidateImageRequestTransaction>*> (sender);
-
-    Command<ValidateImageResponseTransaction> response;
-
-    _bootloader.SetState (BootloaderState::Normal);
-
-    IDPInterface& responseInterface = request.GetReceivedInterface ();
-    IDPPacket& packet = responseInterface.GetEmptyPacket (1);
-
-    ValidateImageResponseTransaction responsePayload = response.CreateTransaction ();
-
-    response.Encode (packet, 1, 1, responsePayload);
-    _bootloader.UsbInterface.ReportIdpPacket (packet);
-
-    _bootloaderService.SystemReset ();
 }

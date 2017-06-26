@@ -29,16 +29,6 @@ class CommsHandlers
     CommsHandlers (GxBootloader& bootloader, IBootloaderService& bootloaderService);
     ~CommsHandlers ();
 
-    void GetVersionCommandRecieved (void* sender, EventArgs& e);
-
-    void PingRequestReceived (void* sender, EventArgs& e);
-
-    void BeginFlashOperationRequestReceived (void* sender, EventArgs& e);
-
-    void FlashDataRequestReceived (void* sender, EventArgs& e);
-
-    void ValidateImageRequestReceived (void* sender, EventArgs& e);
-
 #pragma mark Protected Members
   protected:
 #pragma mark Private Members

@@ -27,7 +27,8 @@ GxBootloaderHidDevice::GxBootloaderHidDevice (IUsbHidDevice& hidDevice, uint16_t
                                               const char* manufacturerString, const char* productString,
                                               const char* serialString)
     : GxInstrumentationHidDevice (hidDevice, vid, pid, manufacturerString, productString, serialString),
-      router (*new IDPRouter ()), stack (IDPStack::CreateIDPStack (1, NULL, router))
+      router (*new IDPRouter ()),
+      stack (IDPStack::CreateIDPStack (1, [&](auto& packet) { this->ReportIdpPacket (packet); }, router))
 {
 
     DataReceived += [&](auto sender, auto& e) { OnDataReceived (sender, e); };
