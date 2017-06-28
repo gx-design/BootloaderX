@@ -54,15 +54,18 @@ void BootloaderApp::OnStartup ()
         _board.BootloaderService->WriteFlags (&flags);
     }
 
-    if (_board.ForceBootloadRequested ())
+    if (_board.BootloaderService->ReadFlags ()->State == BootloaderState::Normal)
     {
-        GxBootloader::SetState (_board, BootloaderState::Bootloader);
-    }
-    else if (_board.BootloaderService->ReadFlags ()->State == BootloaderState::Normal)
-    {
-        _board.BootloaderService->JumpToApplication ();
+        if (_board.ForceBootloadRequested ())
+        {
+            GxBootloader::SetState (_board, BootloaderState::Bootloader);
+        }
+        else
+        {
+            _board.BootloaderService->JumpToApplication ();
 
-        GxBootloader::SetState (_board, BootloaderState::Bootloader);
+            GxBootloader::SetState (_board, BootloaderState::Bootloader);
+        }
     }
 
     _board.PostInitialise ();
