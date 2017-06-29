@@ -24,4 +24,4 @@
 	url = git@gxgitlab.int:GXDesign/BTPlusPlus.git
 [submodule "HidLibrary"]
 	path = HidLibrary
-	url = https://github.com/mikeobrien/HidLibrary.git
+	url = https://github.com/VitalElement/HidLibrary.git
