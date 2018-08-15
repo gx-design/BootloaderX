@@ -23,7 +23,11 @@ class GxBootloader
     GxBootloader (IBoard& board, uint32_t encryptionKey);
     ~GxBootloader ();
 
-    constexpr static float Version = 1.00;
+    #ifndef BL_VERSION
+    #define BL_VERSION 1.00
+    #endif
+
+    constexpr static float Version = BL_VERSION;
 
     void Run (void);
     void Initialise (void);
