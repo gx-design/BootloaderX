@@ -5,6 +5,7 @@ using Avalonia.Diagnostics;
 using Avalonia.Logging.Serilog;
 using Avalonia.Themes.Default;
 using Avalonia.Markup.Xaml;
+using Avalonia.Reactive;
 using Serilog;
 using GX;
 
@@ -22,7 +23,7 @@ namespace FlashTool
         {
             InitializeLogging();
             AppBuilder.Configure<App>()
-                .UsePlatformDetect().SetupWithoutStarting()
+                .UsePlatformDetect().UseReactiveUI()
                 .Start<MainWindow>();
         }
 

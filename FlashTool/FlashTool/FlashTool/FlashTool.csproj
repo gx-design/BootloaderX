@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <TargetFrameworks>netcoreapp2.0</TargetFrameworks>
+        <TargetFramework>netcoreapp2.1</TargetFramework>
     </PropertyGroup>
     <ItemGroup>
         <Compile Update="**\*.xaml.cs">
@@ -16,12 +16,11 @@
       <None Remove="Controls\MetroWindowTheme.xaml" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="Avalonia" Version="0.5.1-build3300-alpha" />
-        <PackageReference Include="Avalonia.Desktop" Version="0.5.1-build3300-alpha" />
+        <PackageReference Include="Avalonia.Desktop" Version="0.7.0" />
+        <PackageReference Include="Avalonia.ReactiveUI" Version="0.7.0" />
         <PackageReference Include="Serilog.Sinks.Trace" Version="2.1.0" />
     </ItemGroup>
     <ItemGroup>
-      <ProjectReference Include="..\GreenLightApplicationDevice\GreenLightApplicationDevice.csproj" />
       <ProjectReference Include="..\GxBootloader\GxBootloader.csproj" />
     </ItemGroup>
 </Project>

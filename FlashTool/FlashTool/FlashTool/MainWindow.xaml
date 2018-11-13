@@ -1,18 +1,19 @@
-﻿<uiext:MetroWindow xmlns="https://github.com/avaloniaui" xmlns:uiext="clr-namespace:FlashTool.Controls;assembly=FlashTool" Name="window"
+﻿<Window xmlns="https://github.com/avaloniaui" xmlns:uiext="clr-namespace:FlashTool.Controls;assembly=FlashTool" Name="window"
         Width="400" Height="90" MinWidth="{Binding #window.Width}"
         MinHeight="{Binding #window.Height}" MaxWidth="{Binding #window.Width}" MaxHeight="{Binding #window.Height}"
-        Title="GxFlash" Background="#2d2d3c" Foreground="WhiteSmoke" HasSystemDecorations="false">
+        Title="GxFlash" Background="#2d2d3c" Foreground="WhiteSmoke">
   <Grid>
     <DockPanel LastChildFill="False" Margin="5 5 0 0">
       <DockPanel DockPanel.Dock="Top" >
         <Button Content="Update" DockPanel.Dock="Right" Height="30" Margin="5 0" Command="{Binding UpdateCommand}" />
+        <Button Content="Connect" DockPanel.Dock="Right" Height="30" Margin="5 0" Command="{Binding ConnectCommand}" />
         <ProgressBar Minimum="0" Maximum="100" Value="{Binding Progress}" />
       </DockPanel>
-      <StackPanel Orientation="Horizontal" Gap="4">
+      <StackPanel Orientation="Horizontal" Spacing="4">
         <TextBlock Text="Status:" />
         <TextBlock Text="{Binding ConnectionStatus, FallbackValue=Disconnected}" />
         <TextBlock Text="{Binding Version, FallbackValue=Version}" />
       </StackPanel>
     </DockPanel>
   </Grid>
-</uiext:MetroWindow>
+</Window>

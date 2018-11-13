@@ -2,29 +2,19 @@
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using FlashTool.Controls;
-using GreenLightApplicationDevice;
 using GX;
 using GxFlash;
 
 namespace FlashTool
 {
-    public class MainWindow : MetroWindow
+    public class MainWindow : Window
     {
         public MainWindow()
         {
             this.InitializeComponent();
             this.AttachDevTools();
 
-            var bootloader = new GxBootloader();
-            var bagSealer = new BagSealer();
-
-            DataContext = new MainWindowViewModel(bootloader, bagSealer);
-
-            Closed += (sender, e) =>
-            {
-                bootloader.Disconnect();
-                bagSealer.Disconnect();
-            };
+            DataContext = new MainWindowViewModel();
         }
 
         private void InitializeComponent()

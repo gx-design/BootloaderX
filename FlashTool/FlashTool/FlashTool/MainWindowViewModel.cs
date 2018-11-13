@@ -11,6 +11,9 @@ using UiUtils.Reactive;
 using GX;
 using Avalonia.Threading;
 using System.Reactive.Threading.Tasks;
+using System.Net.Sockets;
+using System.IO;
+using IdpProtocol;
 
 namespace GxFlash
 {
@@ -21,106 +24,130 @@ namespace GxFlash
         Bootloader
     };
 
+
+
     class MainWindowViewModel : ReactiveObject
     {
-        private IBootloaderApplicationDevice _device;
 
-        private BootloaderConnectionState _currentConnectionState = BootloaderConnectionState.Disconnected;
-
-        private IObservable<BootloaderConnectionState> _connectionState;
-
+        private bool _isConnected;
 
         private string _version;
+
+        private string _status = "IDLE";
         private bool isFlashing;
         private PropertyHelper<double> progressProperty;
         private PropertyHelper<string> connectionStatusProperty;
         private PropertyHelper<BootloaderConnectionState> connectionStateProperty;
 
-        public MainWindowViewModel (GxBootloader bootloader, IBootloaderApplicationDevice applicationDevice)
+        private Client _bootloaderClient; 
+
+        public ReactiveCommand ConnectCommand { get; }
+
+
+        public MainWindowViewModel ()
         {
-            _device = applicationDevice;
+            _bootloaderClient = new Client();
 
-            _connectionState = applicationDevice.IsAttached.CombineLatest(bootloader.IsAttached, (a, b) =>
+
+
+            ConnectCommand = ReactiveCommand.Create(async ()=> 
             {
-                if (!a && !b)
+                if(!_isConnected) 
                 {
-                    return BootloaderConnectionState.Disconnected;
-                }
-                else if (a && !b)
+                    _bootloaderClient.Connect(RxApp.MainThreadScheduler, "10.4.0.147", 1239);
+
+                    await _bootloaderClient.WaitForEnumeration();
+
+                    await _bootloaderClient.ConnectInterfaces();
+
+                    //await _bootloaderClient.BootloaderClientNode.ConnectAsync();
+                    _isConnected = true;
+                } else
                 {
-                    return BootloaderConnectionState.Application;
-                }
-                else if (!a && b)
-                {
-                    return BootloaderConnectionState.Bootloader;
-                }
-                else
-                {
-                    return BootloaderConnectionState.Disconnected;
-                }
+                    _bootloaderClient.Dispose();
+                    _isConnected = false;
+                    _bootloaderClient = new Client();
+                }             
+
+                var version = await _bootloaderClient.BootloaderClientNode.GetVersion();
+
+                Version = version.ToString();
+
             });
 
-            this.connectionStateProperty = _connectionState.ObserveOnUi().ToObservableProperty(this, x => x.ConnectionState);
-
-            var connectionState = _connectionState.Select(c =>
+            UpdateCommand = ReactiveCommand.Create(async ()=> 
             {
-                _currentConnectionState = c;
+                var dlg = new OpenFileDialog();
+                dlg.Title = "Select Firmware Update File";
 
-                switch (_currentConnectionState)
+                dlg.Filters.Add(new FileDialogFilter
                 {
-                    default:
-                    case BootloaderConnectionState.Disconnected:
-                        return "Disconnected";
+                    Name = "Firmware Update File",
+                    Extensions = new List<string>() { "firmware" }
+                });
 
-                    case BootloaderConnectionState.Application:
-                        return "Connected (Application)";
+                dlg.InitialFileName = string.Empty;
+                var result = await dlg.ShowAsync();
 
-                    case BootloaderConnectionState.Bootloader:
-                        return "Connected (Bootloader)";
-                }
-            }).ObserveOnUi();
+                if (result != null && result.Count() >= 1)
+                {
+                    IsFlashing = true;
 
-            this.connectionStatusProperty = connectionState.ToObservableProperty(this, x=>x.ConnectionStatus);
+                    //TODO reset into bootloader.
+                    //await RequestConnectionState(BootloaderConnectionState.Bootloader);
 
-            _connectionState.Subscribe(async s =>
-            {
-                    switch (s)
+                    //TODO wait for bootloader to connect.
+
+                    ConnectionStatus = "Erasing...";
+                    
+                    var erased = await _bootloaderClient.BootloaderClientNode.EraseFlash();
+                    
+                    if(erased) 
                     {
-                        case BootloaderConnectionState.Application:
-                            {
-                                var versionInfo = await applicationDevice.GetVersion();
-
-                                Dispatcher.UIThread.InvokeAsync(() =>
-                                {
-                                    Version = $"BL: {versionInfo?.BootloaderVersion:F2}, FW: {versionInfo?.ApplicationVersion:F2}";
-                                });
-                            }
-                            break;
-
-                        case BootloaderConnectionState.Bootloader:
-                            {
-                                var versionInfo = await bootloader.GetVersion();
-
-                                Dispatcher.UIThread.InvokeAsync(() =>
-                                {
-                                    Version = $"BL: {versionInfo?.BootloaderVersion:F2}";
-                                });
-                            }
-                            break;
-
-                        case BootloaderConnectionState.Disconnected:
-                            Version = string.Empty;
-                            break;
+                        ConnectionStatus = "Erased";
+                    } 
+                    else
+                    {
+                        ConnectionStatus = "Failed";
                     }
-            });
 
-            progressProperty = bootloader.FlashStatus.Select(status =>
+                    var data = await File.ReadAllBytesAsync(result[0]);
+
+                    var blocksize = 32;
+                    var length = data.Length;
+                    var blocks = length / blocksize;
+                    var remain = length % blocksize;
+
+                    for(int i = 0; i < blocks; i++) 
+                    {
+                        var offset = (i * blocksize);
+                        var bytesToWrite = blocksize;
+
+                        if(offset + blocksize > data.Length) 
+                        {
+                            bytesToWrite = (data.Length - offset);
+                        }
+
+                        var currentBlock = new byte[bytesToWrite];
+
+                        Buffer.BlockCopy(data, i * blocksize, currentBlock, 0, bytesToWrite);
+
+                        ConnectionStatus = $"Flashing block {i}";
+
+                        await _bootloaderClient.BootloaderClientNode.WriteBlock(currentBlock);
+                    }
+
+                    IsFlashing = false;
+                }
+            });
+            
+            
+            /* progressProperty = _bootloaderClient.FlashStatus.Select(status =>
             {
                 return ((double)status.BytesFlashed / (double)status.TotalBytes) * 100.0;
-            }).ToObservableProperty(this, x => x.Progress);
+            }).ToObservableProperty(this, x => x.Progress);*/
 
-            UpdateCommand = ReactiveCommand.Create(this.WhenAny(x => x.ConnectionState, x=>x.IsFlashing, (state, flashing) => state.Value != BootloaderConnectionState.Disconnected && !flashing.Value));
-            UpdateCommand.Subscribe(async _ =>
+           /* UpdateCommand = ReactiveCommand.Create(async () =>
             {
                 var dlg = new OpenFileDialog();
                 dlg.Title = "Select Firmware Update File";
@@ -146,44 +173,21 @@ namespace GxFlash
                     await bootloader.FlashBinary(result[0]);
                     IsFlashing = false;
                 }
-            });
-
-            var connectionTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(50), IsEnabled = true };
-
-            connectionTimer.Tick += (sender, e) =>
-            {
-                bootloader.Detect();
-                applicationDevice.Detect();
-            };
+            });*/
         }
 
-        private async Task RequestConnectionState (BootloaderConnectionState requestedState)
+
+        public ReactiveCommand UpdateCommand { get; }
+        
+        public double Progress => 0;
+        
+        public string ConnectionStatus
         {
-            if(_currentConnectionState == requestedState)
-            {
-                return;
-            }
-
-            switch(_currentConnectionState)
-            {
-                case BootloaderConnectionState.Application:
-                    _device.Detect();
-                    await _device.EnterBootloader();
-
-                    await _connectionState.Where(s => s == requestedState).Take(1).ToTask();
-                    break;
-
-                    //TODO implement opposite transition.
-            }
+            get { return _status; }
+            set { this.RaiseAndSetIfChanged(ref _status, value); }
         }
 
-        public ReactiveCommand<object> UpdateCommand { get; }
-        
-        public double Progress => progressProperty.Value;
-        
-        public string ConnectionStatus => connectionStatusProperty.Value;
-
-        public BootloaderConnectionState ConnectionState => connectionStateProperty.Value;
+        public BootloaderConnectionState ConnectionState => BootloaderConnectionState.Bootloader;
         
         public bool IsFlashing
         {

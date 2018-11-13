@@ -9,10 +9,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GxBootloader", "GxBootloade
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlashTool", "FlashTool\FlashTool.csproj", "{C494FD6E-FD35-4778-88AA-CF3572A7291E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HidLibrary", "..\..\HidLibrary\src\HidLibrary\HidLibrary.csproj", "{9E8F1D50-74EA-4C60-BD5C-AB2C5B53BC66}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GreenLightApplicationDevice", "GreenLightApplicationDevice\GreenLightApplicationDevice.csproj", "{29D0A29F-F84D-4D5D-B988-F1A39F50A27D}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BinEncrypt", "BinEncrypt\BinEncrypt.csproj", "{BE67223C-76F0-43C5-8B8F-124265E933B0}"
 EndProject
 Global
