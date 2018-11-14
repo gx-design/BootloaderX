@@ -53,5 +53,18 @@ namespace GX
 
             return result;
         }
+
+        public async Task Commit()
+        {
+            bool result = false;
+
+            var (success, response) = await SendRequestAsync(
+                OutgoingTransaction.Create((UInt16)0xB004, CreateTransactionId()));
+
+            if( success && response != null && response.ResponseCode == IdpResponseCode.OK) 
+            {
+                result = true;
+            }
+        }
     }
 }

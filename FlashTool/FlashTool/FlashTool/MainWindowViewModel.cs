@@ -43,7 +43,7 @@ namespace GxFlash
 
         public ReactiveCommand ConnectCommand { get; }
 
-
+        public int i = 0;
         public MainWindowViewModel ()
         {
             _bootloaderClient = new Client();
@@ -69,9 +69,16 @@ namespace GxFlash
                     _bootloaderClient = new Client();
                 }             
 
-                var version = await _bootloaderClient.BootloaderClientNode.GetVersion();
+                /* while(true)
+                {
+                    var version = await _bootloaderClient.BootloaderClientNode.GetVersion();
 
-                Version = version.ToString();
+                    Version = version.ToString();
+                    
+                    ConnectionStatus = $"{i++}";
+
+                    await Task.Delay(100);
+                }*/
 
             });
 
@@ -137,7 +144,10 @@ namespace GxFlash
                         await _bootloaderClient.BootloaderClientNode.WriteBlock(currentBlock);
                     }
 
+                    await _bootloaderClient.BootloaderClientNode.Commit();
+
                     IsFlashing = false;
+
                 }
             });
             
