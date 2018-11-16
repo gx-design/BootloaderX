@@ -7,9 +7,6 @@
 [submodule "GxInstrumentationHidDevice"]
 	path = GxInstrumentationHidDevice
 	url = git@gxgitlab.int:GXDesign/GxInstrumentationHidDevice.git
-[submodule "IntegratedDebugProtocol"]
-	path = IntegratedDebugProtocol
-	url = git@gxgitlab.int:GXDesign/IntegratedDebugProtocol.git
 [submodule "Utils"]
 	path = Utils
 	url = git@gxgitlab.int:GXDesign/Utils.git
