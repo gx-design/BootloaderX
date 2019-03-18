@@ -13,9 +13,6 @@
 [submodule "Dispatcher"]
 	path = Dispatcher
 	url = https://github.com/danwalmsley/Dispatcher.git
-[submodule "FreeRTOS"]
-	path = FreeRTOS
-	url = https://github.com/danwalmsley/FreeRTOS.git
 [submodule "BTPlusPlus"]
 	path = BTPlusPlus
 	url = https://github.com/danwalmsley/BTPlusPlus.git
