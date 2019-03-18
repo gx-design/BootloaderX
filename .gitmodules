@@ -1,24 +1,24 @@
 [submodule "ArmSystem"]
 	path = ArmSystem
-	url = git@gxgitlab.int:GXDesign/ArmSystem.git
+	url = https://github.com/danwalmsley/ArmSystem.git
 [submodule "CommonHal"]
 	path = CommonHal
-	url = git@gxgitlab.int:GXDesign/CommonHal.git
+	url = https://github.com/danwalmsley/CommonHal.git
 [submodule "GxInstrumentationHidDevice"]
 	path = GxInstrumentationHidDevice
-	url = git@gxgitlab.int:GXDesign/GxInstrumentationHidDevice.git
+	url = https://github.com/danwalmsley/GxInstrumentationHidDevice.git
 [submodule "Utils"]
 	path = Utils
-	url = git@gxgitlab.int:GXDesign/Utils.git
+	url = https://github.com/danwalmsley/Utils.git
 [submodule "Dispatcher"]
 	path = Dispatcher
-	url = git@gxgitlab.int:GXDesign/Dispatcher.git
+	url = https://github.com/danwalmsley/Dispatcher.git
 [submodule "FreeRTOS"]
 	path = FreeRTOS
-	url = git@gxgitlab.int:GXDesign/FreeRTOS.git
+	url = https://github.com/danwalmsley/FreeRTOS.git
 [submodule "BTPlusPlus"]
 	path = BTPlusPlus
-	url = git@gxgitlab.int:GXDesign/BTPlusPlus.git
+	url = https://github.com/danwalmsley/BTPlusPlus.git
 [submodule "IdpProtocol"]
 	path = IdpProtocol
 	url = https://github.com/VitalElement/IdpProtocol.git
