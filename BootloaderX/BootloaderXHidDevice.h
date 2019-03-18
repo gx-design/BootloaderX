@@ -1,10 +1,10 @@
 /******************************************************************************
-*       Description:
-*
-*       Author:
-*         Date: 10 November 2015
-*
-*******************************************************************************/
+ *       Description:
+ *
+ *       Author:
+ *         Date: 10 November 2015
+ *
+ *******************************************************************************/
 #pragma mark Compiler Pragmas
 #ifndef _GXBOOTLOADERHIDDEVICE_H_
 #define _GXBOOTLOADERHIDDEVICE_H_
@@ -12,7 +12,7 @@
 #pragma mark Includes
 #include "Dispatcher.h"
 #include "GxInstrumentationHidDevice.h"
-#include "IDPStack.h"
+//#include "IDPStack.h"
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
@@ -29,12 +29,13 @@ class GxBootloaderHidDevice : public GxInstrumentationHidDevice
 {
 #pragma mark Public Members
   public:
-    GxBootloaderHidDevice (IUsbHidDevice& hidDevice, uint16_t vid, uint16_t pid, const char* manufacturerString,
+    GxBootloaderHidDevice (IUsbHidDevice& hidDevice, uint16_t vid, uint16_t pid,
+                           const char* manufacturerString,
                            const char* productString, const char* serialString);
 
     ~GxBootloaderHidDevice ();
 
-    IDPCommandManager& GetCommandManager ();
+    // IDPCommandManager& GetCommandManager ();
 
 #pragma mark Private Members
   private:
@@ -42,8 +43,8 @@ class GxBootloaderHidDevice : public GxInstrumentationHidDevice
     void ProcessDataReceived ();
     void ProcessPacketReceived (void* sender, EventArgs& e);
 
-    IDPRouter& router;
-    IDPStack& stack;
+    // IDPRouter& router;
+    // IDPStack& stack;
 };
 
 #endif

@@ -1,22 +1,23 @@
 /******************************************************************************
-*       Description:
-*
-*       Author:
-*         Date: 10 November 2015
-*
-*******************************************************************************/
+ *       Description:
+ *
+ *       Author:
+ *         Date: 10 November 2015
+ *
+ *******************************************************************************/
 #pragma mark Compiler Pragmas
-#ifndef _IBOARD_H_
-#define _IBOARD_H_
+#pragma once
 
 #pragma mark Includes
-#include "GxBootloaderHidDevice.h"
+#include "Application.h"
+#include "Dispatcher.h"
 #include "IBootloaderService.h"
+#include "IUsbHidDevice.h"
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
 
-class IBoard
+class IBootloaderBoard : public ISystemTime
 {
 #pragma mark Public Members
   public:
@@ -37,5 +38,3 @@ class IBoard
 #pragma mark Private Members
   private:
 };
-
-#endif

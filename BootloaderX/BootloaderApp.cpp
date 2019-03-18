@@ -1,16 +1,16 @@
 /******************************************************************************
-*       Description:
-*
-*       Author:
-*         Date: 28 July 2016
-*
-*******************************************************************************/
+ *       Description:
+ *
+ *       Author:
+ *         Date: 28 July 2016
+ *
+ *******************************************************************************/
 #pragma mark Compiler Pragmas
 
 
 #pragma mark Includes
 #include "BootloaderApp.h"
-#include "GxBootloader.h"
+#include "BootloaderX.h"
 #include "Kernel.h"
 #include "Thread.h"
 #include "Trace.h"
@@ -25,8 +25,8 @@
 
 
 #pragma mark Member Implementations
-BootloaderApp::BootloaderApp (IBoard& board, uint32_t encryptionKey, GetSystemTimeDelegate delegate)
-    : Application (delegate), _board (board)
+BootloaderApp::BootloaderApp (IBootloaderBoard& board, uint32_t encryptionKey)
+    : Application (board), _board (board)
 {
     _encryptionKey = encryptionKey;
 }
@@ -45,7 +45,8 @@ void BootloaderApp::OnStartup ()
         GxBootloader::InitialiseFlags (_board);
     }
 
-    if (_board.BootloaderService->ReadFlags ()->Version != GxBootloader::Version)
+    if (_board.BootloaderService->ReadFlags ()->Version !=
+        GxBootloader::Version)
     {
         auto flags = *_board.BootloaderService->ReadFlags ();
 
@@ -54,7 +55,8 @@ void BootloaderApp::OnStartup ()
         _board.BootloaderService->WriteFlags (&flags);
     }
 
-    if (_board.BootloaderService->ReadFlags ()->State == BootloaderState::Normal)
+    if (_board.BootloaderService->ReadFlags ()->State ==
+        BootloaderState::Normal)
     {
         if (_board.ForceBootloadRequested ())
         {
@@ -77,23 +79,10 @@ DispatcherActions& BootloaderApp::GetDispatcherActions ()
     return _board.PlatformDispatcherActions;
 }
 
-void BootloaderApp::Run ()
-{
-    Thread::StartNew ([&] { Main (); }, 6000);
-    Thread::StartNew ([&] { PriorityThread (); }, 2000);
-
-    Kernel::Start ();
-}
-
-
 Dispatcher& BootloaderApp::GetCurrentDispatcher ()
 {
-    auto thread = Thread::GetCurrentThread ();
-    return *(Dispatcher*)thread->UserData;
 }
 
 void BootloaderApp::RegisterDispatcherToThread (Dispatcher& dispatcher)
 {
-    auto thread = Thread::GetCurrentThread ();
-    thread->UserData = &dispatcher;
 }

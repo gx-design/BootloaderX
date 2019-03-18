@@ -1,17 +1,17 @@
 /******************************************************************************
-*       Description:
-*
-*       Author:
-*         Date: 10 November 2015
-*
-*******************************************************************************/
+ *       Description:
+ *
+ *       Author:
+ *         Date: 10 November 2015
+ *
+ *******************************************************************************/
 #pragma mark Compiler Pragmas
 
 
 #pragma mark Includes
+#include "BootloaderX.h"
 #include "CRC.h"
 #include "Comms/CommsHandlers.h"
-#include "GxBootloader.h"
 #include "Kernel.h"
 
 #pragma mark Definitions and Constants
@@ -28,9 +28,10 @@ static const char* serialString = "00000001";
 
 
 #pragma mark Member Implementations
-GxBootloader::GxBootloader (IBoard& board, uint32_t encryptionKey)
-    : UsbInterface (
-      GxBootloaderHidDevice (*board.HidDevice, vendorId, productId, manufacturerString, productString, serialString)),
+GxBootloader::GxBootloader (IBootloaderBoard& board, uint32_t encryptionKey)
+    : UsbInterface (GxBootloaderHidDevice (*board.HidDevice, vendorId,
+                                           productId, manufacturerString,
+                                           productString, serialString)),
       board (board)
 {
     this->encryptionKey = encryptionKey;
@@ -41,7 +42,7 @@ GxBootloader::~GxBootloader ()
 {
 }
 
-void GxBootloader::InitialiseFlags (IBoard& board)
+void GxBootloader::InitialiseFlags (IBootloaderBoard& board)
 {
     BootloaderFlags flags;
 
@@ -50,7 +51,7 @@ void GxBootloader::InitialiseFlags (IBoard& board)
     board.BootloaderService->WriteFlags (&flags);
 }
 
-void GxBootloader::SetState (IBoard& board, BootloaderState state)
+void GxBootloader::SetState (IBootloaderBoard& board, BootloaderState state)
 {
     auto flags = *board.BootloaderService->ReadFlags ();
 
@@ -75,7 +76,8 @@ void GxBootloader::Initialise ()
     new CommsHandlers (*this, *board.BootloaderService);
 }
 
-uint32_t GxBootloader::EncryptDecrypt (uint32_t key, uint32_t& scrambleKey, uint32_t data)
+uint32_t GxBootloader::EncryptDecrypt (uint32_t key, uint32_t& scrambleKey,
+                                       uint32_t data)
 {
     uint8_t* scrambleBytes = reinterpret_cast<uint8_t*> (&scrambleKey);
 
@@ -83,7 +85,7 @@ uint32_t GxBootloader::EncryptDecrypt (uint32_t key, uint32_t& scrambleKey, uint
 
     for (int i = 0; i < sizeof (uint32_t); i++)
     {
-        crc = CRC::Crc16 (crc, (int8_t)*scrambleBytes++);
+        crc = CRC::Crc16 (crc, (int8_t) *scrambleBytes++);
     }
 
     scrambleKey = scrambleKey & 0xFFFF0000;
@@ -95,11 +97,11 @@ uint32_t GxBootloader::EncryptDecrypt (uint32_t key, uint32_t& scrambleKey, uint
 
     for (int i = 0; i < sizeof (uint32_t); i++)
     {
-        crc = CRC::Crc16 (crc, (int8_t)*scrambleBytes++);
+        crc = CRC::Crc16 (crc, (int8_t) *scrambleBytes++);
     }
 
     scrambleKey = scrambleKey & 0x0000FFFF;
-    scrambleKey |= ((uint32_t)crc) << 16;
+    scrambleKey |= ((uint32_t) crc) << 16;
 
     return data ^ key ^ scrambleKey;
 }
