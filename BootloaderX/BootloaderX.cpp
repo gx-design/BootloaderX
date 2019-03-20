@@ -74,7 +74,7 @@ void BootloaderX::Initialise ()
 
     router->AddAdaptor (UsbInterface);
 
-    router->AddNode (*new BootloaderXNode ());
+    router->AddNode (*new BootloaderXNode (*this, *board.BootloaderService));
 }
 
 uint32_t BootloaderX::EncryptDecrypt (uint32_t key, uint32_t& scrambleKey,

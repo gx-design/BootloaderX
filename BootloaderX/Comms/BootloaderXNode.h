@@ -6,6 +6,7 @@
  *******************************************************************************/
 #pragma once
 
+#include "BootloaderX.h"
 #include "IdpNode.h"
 #include <stdbool.h>
 #include <stdint.h>
@@ -19,7 +20,10 @@ class BootloaderXNode : public IdpNode
     /**
      * Instantiates a new instance of BootloaderXNode
      */
-    BootloaderXNode ();
+    BootloaderXNode (BootloaderX& bootloader,
+                     IBootloaderService& bootloaderService);
 
     virtual ~BootloaderXNode ();
+
+  private:
 };
