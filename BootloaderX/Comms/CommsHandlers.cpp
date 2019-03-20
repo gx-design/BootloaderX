@@ -22,7 +22,7 @@
 
 
 #pragma mark Member Implementations
-CommsHandlers::CommsHandlers (GxBootloader& bootloader,
+CommsHandlers::CommsHandlers (BootloaderX& bootloader,
                               IBootloaderService& bootloaderService)
     : _bootloader (bootloader), _bootloaderService (bootloaderService)
 //_commandManager (bootloader.UsbInterface.GetCommandManager ())

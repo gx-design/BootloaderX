@@ -26,17 +26,17 @@ class FlashDataEventArgs : public EventArgs
     uint8_t* data;
 };
 
-class GxBootloaderHidDevice : public GxInstrumentationHidDevice,
-                              public INotifyingStream,
-                              public IAdaptor
+class BootloaderXHidDevice : public GxInstrumentationHidDevice,
+                             public INotifyingStream,
+                             public IAdaptor
 {
 #pragma mark Public Members
   public:
-    GxBootloaderHidDevice (IUsbHidDevice& hidDevice, uint16_t vid, uint16_t pid,
-                           const char* manufacturerString,
-                           const char* productString, const char* serialString);
+    BootloaderXHidDevice (IUsbHidDevice& hidDevice, uint16_t vid, uint16_t pid,
+                          const char* manufacturerString,
+                          const char* productString, const char* serialString);
 
-    ~GxBootloaderHidDevice ();
+    ~BootloaderXHidDevice ();
 
     bool Transmit (std::shared_ptr<IdpPacket> packet);
 

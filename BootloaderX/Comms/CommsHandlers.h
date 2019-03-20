@@ -26,7 +26,7 @@ class CommsHandlers
     /**
      * Instantiates a new instance of CommsHandlers.
      */
-    CommsHandlers (GxBootloader& bootloader,
+    CommsHandlers (BootloaderX& bootloader,
                    IBootloaderService& bootloaderService);
     ~CommsHandlers ();
 
@@ -34,7 +34,7 @@ class CommsHandlers
   protected:
 #pragma mark Private Members
   private:
-    GxBootloader& _bootloader;
+    BootloaderX& _bootloader;
     IBootloaderService& _bootloaderService;
     // IDPCommandManager& _commandManager;
 };

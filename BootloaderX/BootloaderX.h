@@ -6,8 +6,7 @@
  *
  *******************************************************************************/
 #pragma mark Compiler Pragmas
-#ifndef _GXBOOTLOADER_H_
-#define _GXBOOTLOADER_H_
+#pragma once
 
 #pragma mark Includes
 #include "BootloaderXHidDevice.h"
@@ -16,12 +15,12 @@
 #include <stddef.h>
 #include <stdint.h>
 
-class GxBootloader
+class BootloaderX
 {
 #pragma mark Public Members
   public:
-    GxBootloader (IBootloaderBoard& board, uint32_t encryptionKey);
-    ~GxBootloader ();
+    BootloaderX (IBootloaderBoard& board, uint32_t encryptionKey);
+    ~BootloaderX ();
 
 #ifndef BL_VERSION
 #define BL_VERSION 1.00
@@ -32,7 +31,7 @@ class GxBootloader
     void Run (void);
     void Initialise (void);
 
-    GxBootloaderHidDevice UsbInterface;
+    BootloaderXHidDevice UsbInterface;
 
     static void SetState (IBootloaderBoard& board, BootloaderState state);
 
@@ -52,5 +51,3 @@ class GxBootloader
   private:
     IBootloaderBoard& board;
 };
-
-#endif

@@ -29,30 +29,30 @@ static const char* serialString = "00000001";
 
 
 #pragma mark Member Implementations
-GxBootloader::GxBootloader (IBootloaderBoard& board, uint32_t encryptionKey)
-    : UsbInterface (GxBootloaderHidDevice (*board.HidDevice, vendorId,
-                                           productId, manufacturerString,
-                                           productString, serialString)),
+BootloaderX::BootloaderX (IBootloaderBoard& board, uint32_t encryptionKey)
+    : UsbInterface (BootloaderXHidDevice (*board.HidDevice, vendorId, productId,
+                                          manufacturerString, productString,
+                                          serialString)),
       board (board)
 {
     this->encryptionKey = encryptionKey;
     Dispatcher::Invoke ([&] { Initialise (); });
 }
 
-GxBootloader::~GxBootloader ()
+BootloaderX::~BootloaderX ()
 {
 }
 
-void GxBootloader::InitialiseFlags (IBootloaderBoard& board)
+void BootloaderX::InitialiseFlags (IBootloaderBoard& board)
 {
     BootloaderFlags flags;
 
-    flags.Version = GxBootloader::Version;
+    flags.Version = BootloaderX::Version;
 
     board.BootloaderService->WriteFlags (&flags);
 }
 
-void GxBootloader::SetState (IBootloaderBoard& board, BootloaderState state)
+void BootloaderX::SetState (IBootloaderBoard& board, BootloaderState state)
 {
     auto flags = *board.BootloaderService->ReadFlags ();
 
@@ -61,16 +61,12 @@ void GxBootloader::SetState (IBootloaderBoard& board, BootloaderState state)
     board.BootloaderService->WriteFlags (&flags);
 }
 
-void GxBootloader::SetState (BootloaderState state)
+void BootloaderX::SetState (BootloaderState state)
 {
-    GxBootloader::SetState (board, state);
+    BootloaderX::SetState (board, state);
 }
 
-void GxBootloader::Run ()
-{
-}
-
-void GxBootloader::Initialise ()
+void BootloaderX::Initialise ()
 {
     board.HidDevice->InitialiseStack ();
 
@@ -81,8 +77,8 @@ void GxBootloader::Initialise ()
     router->AddNode (*new BootloaderXNode ());
 }
 
-uint32_t GxBootloader::EncryptDecrypt (uint32_t key, uint32_t& scrambleKey,
-                                       uint32_t data)
+uint32_t BootloaderX::EncryptDecrypt (uint32_t key, uint32_t& scrambleKey,
+                                      uint32_t data)
 {
     uint8_t* scrambleBytes = reinterpret_cast<uint8_t*> (&scrambleKey);
 

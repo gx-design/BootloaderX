@@ -43,15 +43,14 @@ void BootloaderApp::OnStartup ()
 
     if (!_board.BootloaderService->ReadFlags ()->IsBootloaderPresent ())
     {
-        GxBootloader::InitialiseFlags (_board);
+        BootloaderX::InitialiseFlags (_board);
     }
 
-    if (_board.BootloaderService->ReadFlags ()->Version !=
-        GxBootloader::Version)
+    if (_board.BootloaderService->ReadFlags ()->Version != BootloaderX::Version)
     {
         auto flags = *_board.BootloaderService->ReadFlags ();
 
-        flags.Version = GxBootloader::Version;
+        flags.Version = BootloaderX::Version;
 
         _board.BootloaderService->WriteFlags (&flags);
     }
@@ -61,18 +60,18 @@ void BootloaderApp::OnStartup ()
     {
         if (_board.ForceBootloadRequested ())
         {
-            GxBootloader::SetState (_board, BootloaderState::Bootloader);
+            BootloaderX::SetState (_board, BootloaderState::Bootloader);
         }
         else
         {
             _board.BootloaderService->JumpToApplication ();
 
-            GxBootloader::SetState (_board, BootloaderState::Bootloader);
+            BootloaderX::SetState (_board, BootloaderState::Bootloader);
         }
     }
 
     _board.PostInitialise ();
-    new GxBootloader (_board, _encryptionKey);
+    new BootloaderX (_board, _encryptionKey);
 }
 
 DispatcherActions& BootloaderApp::GetDispatcherActions ()

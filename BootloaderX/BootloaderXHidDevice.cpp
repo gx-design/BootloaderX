@@ -23,11 +23,11 @@
 
 
 #pragma mark Member Implementations
-GxBootloaderHidDevice::GxBootloaderHidDevice (IUsbHidDevice& hidDevice,
-                                              uint16_t vid, uint16_t pid,
-                                              const char* manufacturerString,
-                                              const char* productString,
-                                              const char* serialString)
+BootloaderXHidDevice::BootloaderXHidDevice (IUsbHidDevice& hidDevice,
+                                            uint16_t vid, uint16_t pid,
+                                            const char* manufacturerString,
+                                            const char* productString,
+                                            const char* serialString)
     : GxInstrumentationHidDevice (hidDevice, vid, pid, manufacturerString,
                                   productString, serialString),
       parser (*new IdpPacketParser ())
@@ -42,11 +42,11 @@ GxBootloaderHidDevice::GxBootloaderHidDevice (IUsbHidDevice& hidDevice,
     };
 }
 
-GxBootloaderHidDevice::~GxBootloaderHidDevice ()
+BootloaderXHidDevice::~BootloaderXHidDevice ()
 {
 }
 
-bool GxBootloaderHidDevice::Transmit (std::shared_ptr<IdpPacket> packet)
+bool BootloaderXHidDevice::Transmit (std::shared_ptr<IdpPacket> packet)
 {
     if (IsConnected ())
     {
@@ -57,22 +57,22 @@ bool GxBootloaderHidDevice::Transmit (std::shared_ptr<IdpPacket> packet)
     return false;
 }
 
-bool GxBootloaderHidDevice::IsValid ()
+bool BootloaderXHidDevice::IsValid ()
 {
     return IsConnected ();
 }
 
-int32_t GxBootloaderHidDevice::BytesReceived ()
+int32_t BootloaderXHidDevice::BytesReceived ()
 {
     return receiveBuffer->Count ();
 }
 
-void GxBootloaderHidDevice::Close ()
+void BootloaderXHidDevice::Close ()
 {
     // TODO implement hid device disconnect.
 }
 
-int32_t GxBootloaderHidDevice::Read (void* buffer, uint32_t length)
+int32_t BootloaderXHidDevice::Read (void* buffer, uint32_t length)
 {
     uint32_t bytesRead = 0;
 
@@ -85,7 +85,7 @@ int32_t GxBootloaderHidDevice::Read (void* buffer, uint32_t length)
     return bytesRead;
 }
 
-int32_t GxBootloaderHidDevice::Write (const void* data, uint32_t length)
+int32_t BootloaderXHidDevice::Write (const void* data, uint32_t length)
 {
     SendData (static_cast<const uint8_t*> (data), length);
     return length;
