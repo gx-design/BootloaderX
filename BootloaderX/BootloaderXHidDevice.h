@@ -6,13 +6,14 @@
  *
  *******************************************************************************/
 #pragma mark Compiler Pragmas
-#ifndef _GXBOOTLOADERHIDDEVICE_H_
-#define _GXBOOTLOADERHIDDEVICE_H_
+#pragma once
 
 #pragma mark Includes
 #include "Dispatcher.h"
 #include "GxInstrumentationHidDevice.h"
-//#include "IDPStack.h"
+#include "IAdaptor.h"
+#include "IStream.h"
+#include "IdpPacketParser.h"
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
@@ -25,7 +26,9 @@ class FlashDataEventArgs : public EventArgs
     uint8_t* data;
 };
 
-class GxBootloaderHidDevice : public GxInstrumentationHidDevice
+class GxBootloaderHidDevice : public GxInstrumentationHidDevice,
+                              public INotifyingStream,
+                              public IAdaptor
 {
 #pragma mark Public Members
   public:
@@ -35,16 +38,21 @@ class GxBootloaderHidDevice : public GxInstrumentationHidDevice
 
     ~GxBootloaderHidDevice ();
 
-    // IDPCommandManager& GetCommandManager ();
+    bool Transmit (std::shared_ptr<IdpPacket> packet);
+
+    bool IsValid ();
+    int32_t BytesReceived ();
+
+    void Close ();
+    int32_t Read (void* buffer, uint32_t length);
+    int32_t Write (const void* data, uint32_t length);
+
+    const char* Name ()
+    {
+        return "Bootloader.USB";
+    }
 
 #pragma mark Private Members
   private:
-    void OnDataReceived (void* sender, EventArgs& e);
-    void ProcessDataReceived ();
-    void ProcessPacketReceived (void* sender, EventArgs& e);
-
-    // IDPRouter& router;
-    // IDPStack& stack;
+    IdpPacketParser& parser;
 };
-
-#endif

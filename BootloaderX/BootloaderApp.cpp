@@ -25,8 +25,9 @@
 
 
 #pragma mark Member Implementations
-BootloaderApp::BootloaderApp (IBootloaderBoard& board, uint32_t encryptionKey)
-    : Application (board), _board (board)
+BootloaderApp::BootloaderApp (IPlatformImpl& platform, IBootloaderBoard& board,
+                              uint32_t encryptionKey)
+    : Application (platform, board), _board (board)
 {
     _encryptionKey = encryptionKey;
 }

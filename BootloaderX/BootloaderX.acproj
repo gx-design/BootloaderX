@@ -30,6 +30,11 @@
       "value": "./",
       "exported": true,
       "global": false
+    },
+    {
+      "value": "Comms",
+      "exported": true,
+      "global": false
     }
   ],
   "staticLibraries": [],

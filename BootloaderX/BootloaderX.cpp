@@ -11,12 +11,13 @@
 #pragma mark Includes
 #include "BootloaderX.h"
 #include "CRC.h"
-#include "Comms/CommsHandlers.h"
+#include "Comms/BootloaderXNode.h"
+#include "IdpRouter.h"
 #include "Kernel.h"
 
 #pragma mark Definitions and Constants
-static const uint16_t vendorId = 0xFC02;
-static const uint16_t productId = 0x0001;
+static const uint16_t vendorId = 0xFD02;
+static const uint16_t productId = 0x0002;
 static const char* manufacturerString = "GX Design";
 static const char* productString = "GX Device Firmware Bootloader";
 static const char* serialString = "00000001";
@@ -73,7 +74,11 @@ void GxBootloader::Initialise ()
 {
     board.HidDevice->InitialiseStack ();
 
-    new CommsHandlers (*this, *board.BootloaderService);
+    auto router = new IdpRouter ();
+
+    router->AddAdaptor (UsbInterface);
+
+    router->AddNode (*new BootloaderXNode ());
 }
 
 uint32_t GxBootloader::EncryptDecrypt (uint32_t key, uint32_t& scrambleKey,

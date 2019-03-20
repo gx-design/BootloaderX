@@ -29,20 +29,64 @@ GxBootloaderHidDevice::GxBootloaderHidDevice (IUsbHidDevice& hidDevice,
                                               const char* productString,
                                               const char* serialString)
     : GxInstrumentationHidDevice (hidDevice, vid, pid, manufacturerString,
-                                  productString, serialString)
+                                  productString, serialString),
+      parser (*new IdpPacketParser ())
 {
-    DataReceived += [&](auto sender, auto& e) { OnDataReceived (sender, e); };
+    parser.Stream (*this);
+
+    parser.Start ();
+
+    parser.DataReceived += [&](auto sender, auto& e) {
+        auto& args = static_cast<DataReceivedEventArgs&> (e);
+        IAdaptor::OnReceive (args.Packet);
+    };
 }
 
 GxBootloaderHidDevice::~GxBootloaderHidDevice ()
 {
 }
 
-void GxBootloaderHidDevice::OnDataReceived (void* sender, EventArgs& e)
+bool GxBootloaderHidDevice::Transmit (std::shared_ptr<IdpPacket> packet)
 {
-    Dispatcher::Invoke ([&] { ProcessDataReceived (); });
+    if (IsConnected ())
+    {
+        ReportIdpPacket (*packet);
+        return true;
+    }
+
+    return false;
 }
 
-void GxBootloaderHidDevice::ProcessDataReceived ()
+bool GxBootloaderHidDevice::IsValid ()
 {
+    return IsConnected ();
+}
+
+int32_t GxBootloaderHidDevice::BytesReceived ()
+{
+    return receiveBuffer->Count ();
+}
+
+void GxBootloaderHidDevice::Close ()
+{
+    // TODO implement hid device disconnect.
+}
+
+int32_t GxBootloaderHidDevice::Read (void* buffer, uint32_t length)
+{
+    uint32_t bytesRead = 0;
+
+    while (!receiveBuffer->IsEmpty () && length > 0)
+    {
+        static_cast<uint8_t*> (buffer)[bytesRead++] = ReceiveData ();
+        length--;
+    }
+
+    return bytesRead;
+}
+
+int32_t GxBootloaderHidDevice::Write (const void* data, uint32_t length)
+{
+    SendData (static_cast<const uint8_t*> (data), length);
+    return length;
 }

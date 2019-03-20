@@ -11,6 +11,7 @@
 #pragma mark Includes
 #include "Application.h"
 #include "Dispatcher.h"
+#include "IAdaptor.h"
 #include "IBootloaderService.h"
 #include "IUsbHidDevice.h"
 #include <stdbool.h>

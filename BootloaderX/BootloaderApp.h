@@ -6,8 +6,7 @@
  *
  *******************************************************************************/
 #pragma mark Compiler Pragmas
-#ifndef APP_H_
-#define APP_H_
+#pragma once
 
 #pragma mark Includes
 #include "Application.h"
@@ -28,11 +27,14 @@ class BootloaderApp : public Application
      * Instantiates a new instance of App.
      * @param board - a reference to the board interface for this platform.
      */
-    BootloaderApp (IBootloaderBoard& board, uint32_t encryptionKey);
+    BootloaderApp (IPlatformImpl& platform, IBootloaderBoard& board,
+                   uint32_t encryptionKey);
+
+    virtual ~BootloaderApp ()
+    {
+    }
 
 #pragma mark Application Implementation
-    void Run ();
-
     void OnBeforeStartup ();
 
     void OnStartup ();
@@ -48,5 +50,3 @@ class BootloaderApp : public Application
     IBootloaderBoard& _board; //!< A reference to the board interface.
     uint32_t _encryptionKey;
 };
-
-#endif
