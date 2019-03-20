@@ -11,6 +11,8 @@ BootloaderXNode::BootloaderXNode (BootloaderX& bootloader,
                                   IBootloaderService& bootloaderService)
     : IdpNode (Guid_t ("EBBF4FFB-0F3C-4975-83D2-B6FE4643D641"), "BootloaderX")
 {
+    Timeout (10000);
+
     Manager ().RegisterCommand (0xB001,
                                 [&](std::shared_ptr<IncomingTransaction> i,
                                     std::shared_ptr<OutgoingTransaction> o) {
