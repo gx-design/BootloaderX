@@ -72,6 +72,8 @@ void BootloaderX::Initialise ()
 
     auto router = new IdpRouter ();
 
+    router->Timeout (10000);
+
     router->AddAdaptor (UsbInterface);
 
     router->AddNode (*new BootloaderXNode (*this, *board.BootloaderService));
