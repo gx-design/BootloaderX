@@ -6,6 +6,7 @@
  ******************************************************************************/
 
 #include "BootloaderXNode.h"
+#include "BitConverter.h"
 
 BootloaderXNode::BootloaderXNode (BootloaderX& bootloader,
                                   IBootloaderService& bootloaderService)
@@ -49,7 +50,7 @@ BootloaderXNode::BootloaderXNode (BootloaderX& bootloader,
 
                 if (remainingSize >= 4)
                 {
-                    auto data = i->Read<uint32_t> ();
+                    auto data = BitConverter::SwapEndian (i->Read<uint32_t> ());
 
                     data = BootloaderX::EncryptDecrypt (
                         bootloader.encryptionKey, bootloader.scrambleKey, data);
@@ -64,7 +65,7 @@ BootloaderXNode::BootloaderXNode (BootloaderX& bootloader,
                 {
                     result = false;
                     // This would be a bug!
-                    auto data = i->Read<uint16_t> ();
+                    auto data = BitConverter::SwapEndian (i->Read<uint16_t> ());
 
                     bootloaderService.FlashData (bootloader.currentAddress,
                                                  data);
@@ -76,7 +77,7 @@ BootloaderXNode::BootloaderXNode (BootloaderX& bootloader,
                 {
                     result = false;
                     // This would be a bug!
-                    auto data = i->Read<uint8_t> ();
+                    auto data = BitConverter::SwapEndian (i->Read<uint8_t> ());
                     bootloaderService.FlashData (bootloader.currentAddress,
                                                  data);
                     bootloader.currentAddress++;
