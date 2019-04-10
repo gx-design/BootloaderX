@@ -78,11 +78,3 @@ DispatcherActions& BootloaderApp::GetDispatcherActions ()
 {
     return _board.PlatformDispatcherActions;
 }
-
-Dispatcher& BootloaderApp::GetCurrentDispatcher ()
-{
-}
-
-void BootloaderApp::RegisterDispatcherToThread (Dispatcher& dispatcher)
-{
-}

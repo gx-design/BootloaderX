@@ -41,10 +41,6 @@ class BootloaderApp : public Application
 
     DispatcherActions& GetDispatcherActions ();
 
-    Dispatcher& GetCurrentDispatcher ();
-
-    void RegisterDispatcherToThread (Dispatcher& dispatcher);
-
 #pragma mark Private Members
   private:
     IBootloaderBoard& _board; //!< A reference to the board interface.
