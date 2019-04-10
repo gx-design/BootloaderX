@@ -17,7 +17,7 @@
 
 #pragma mark Definitions and Constants
 static const uint16_t vendorId = 0xFD02;
-static const uint16_t productId = 0x0002;
+static const uint16_t productId = 0x0001;
 static const char* manufacturerString = "GX Design";
 static const char* productString = "GX Device Firmware Bootloader";
 static const char* serialString = "00000001";
