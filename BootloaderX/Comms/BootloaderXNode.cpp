@@ -19,8 +19,8 @@ BootloaderXNode::BootloaderXNode (BootloaderX& bootloader,
                                     std::shared_ptr<OutgoingTransaction> o) {
                                     o->Write(BootloaderX::VersionMajor);
                                     o->Write(BootloaderX::VersionMinor);
-                                    o->Write(BootloaderX::VersionRev);
                                     o->Write(BootloaderX::VersionBuild);
+                                    o->Write(BootloaderX::VersionRev);
 
                                     return IdpResponseCode::OK;
                                 });

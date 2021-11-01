@@ -27,8 +27,8 @@
 #define VERSION_REV (0)
 #endif
 
-#ifndef BUILD
-#define BUILD (1)
+#ifndef BUILD_ID
+#define BUILD_ID (1)
 #endif
 
 
@@ -46,7 +46,7 @@ class BootloaderX
     constexpr static int VersionMajor = VERSION_MAJ;
     constexpr static int VersionMinor = VERSION_MIN;
     constexpr static int VersionRev = VERSION_REV;
-    constexpr static int VersionBuild = BUILD;
+    constexpr static int VersionBuild = BUILD_ID;
 
     constexpr static float Version = BL_VERSION;
 
