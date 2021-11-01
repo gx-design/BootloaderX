@@ -17,8 +17,10 @@ BootloaderXNode::BootloaderXNode (BootloaderX& bootloader,
     Manager ().RegisterCommand (0xB001,
                                 [&](std::shared_ptr<IncomingTransaction> i,
                                     std::shared_ptr<OutgoingTransaction> o) {
-                                    o->Write (0.0f);
-                                    o->Write (BootloaderX::Version);
+                                    o->Write(BootloaderX::VersionMajor);
+                                    o->Write(BootloaderX::VersionMinor);
+                                    o->Write(BootloaderX::VersionRev);
+                                    o->Write(BootloaderX::VersionBuild);
 
                                     return IdpResponseCode::OK;
                                 });
