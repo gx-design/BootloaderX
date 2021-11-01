@@ -32,7 +32,7 @@ BootloaderXHidDevice::BootloaderXHidDevice (IUsbHidDevice& hidDevice,
                                   productString, serialString),
       parser (*new IdpPacketParser ())
 {
-    parser.Stream (*this);
+    parser.Stream (this);
 
     parser.Start ();
 
