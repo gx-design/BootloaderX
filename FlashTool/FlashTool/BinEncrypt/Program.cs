@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using IntelHexSerializer.File;
 
 namespace BinEncrypt
 {
@@ -74,7 +75,38 @@ namespace BinEncrypt
 
         static int Main(string[] args)
         {
-            if(args.Count() == 3)
+            if (args.Count() > 3 && args[0] == "--hex-merge")
+            {
+                Console.WriteLine("Hex Merge");
+
+                IntelHexFile hexFile = null;
+                
+                for (int i = 1; i < args.Length - 1; i++)
+                {
+                    var currentFile = ConvertToFullPath(args[i]);
+
+                    if (File.Exists(currentFile))
+                    {
+                        Console.WriteLine($"Merging: {currentFile}");
+                        
+                        if (hexFile is null)
+                        {
+                            hexFile = IntelHexFile.CreateFrom(File.ReadAllText(currentFile));
+                        }
+                        else
+                        {
+                            var currentHexFile = IntelHexFile.CreateFrom(File.ReadAllText(currentFile));
+
+                            hexFile.Records.Remove(hexFile.Records.Last());
+                            
+                            hexFile.Records.AddRange(currentHexFile.Records);
+                        }
+                    }
+                }
+                
+                File.WriteAllText(ConvertToFullPath(args[^1]), hexFile.ToString());
+            }
+            else if(args.Count() == 3)
             {
                 args[1] = ConvertToFullPath(args[1]);
                 args[2] = ConvertToFullPath(args[2]);
