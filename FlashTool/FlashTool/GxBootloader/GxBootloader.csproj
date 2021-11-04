@@ -5,11 +5,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Reactive" Version="4.1.0" />
+    <PackageReference Include="System.Reactive" Version="4.1.5" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\IdpProtocol\src\cs\IdpProtocol\IdpProtocol.csproj" />
+    <ProjectReference Include="..\..\..\..\..\Shared\IdpProtocol\src\cs\IdpProtocol\IdpProtocol.csproj" />
   </ItemGroup>
 
 </Project>

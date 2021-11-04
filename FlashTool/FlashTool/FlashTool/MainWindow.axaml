@@ -1,6 +1,8 @@
-﻿<Window xmlns="https://github.com/avaloniaui" xmlns:uiext="clr-namespace:FlashTool.Controls;assembly=FlashTool" Name="window"
+﻿<Window xmlns="https://github.com/avaloniaui" Name="window"
         Width="400" Height="90" MinWidth="{Binding #window.Width}"
         MinHeight="{Binding #window.Height}" MaxWidth="{Binding #window.Width}" MaxHeight="{Binding #window.Height}"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="FlashTool.MainWindow"
         Title="GxFlash" Background="#2d2d3c" Foreground="WhiteSmoke">
   <Grid>
     <DockPanel LastChildFill="False" Margin="5 5 0 0">

@@ -14,6 +14,9 @@ using System.Reactive.Threading.Tasks;
 using System.Net.Sockets;
 using System.IO;
 using IdpProtocol;
+using System.Reactive;
+using Avalonia;
+using Avalonia.Controls.ApplicationLifetimes;
 
 namespace GxFlash
 {
@@ -41,7 +44,7 @@ namespace GxFlash
 
         private Client _bootloaderClient; 
 
-        public ReactiveCommand ConnectCommand { get; }
+        public ReactiveCommand<Unit, Unit> ConnectCommand { get; }
 
         public int i = 0;
         public MainWindowViewModel ()
@@ -50,17 +53,25 @@ namespace GxFlash
 
 
 
-            ConnectCommand = ReactiveCommand.Create(async ()=> 
+            ConnectCommand = ReactiveCommand.CreateFromTask(async ()=> 
             {
-                if(!_isConnected) 
+                if (!_isConnected)
                 {
-                    _bootloaderClient.Connect(RxApp.MainThreadScheduler, "10.4.0.147", 1239);
+                    Console.WriteLine("connecting");
+                    _bootloaderClient.Connect(RxApp.MainThreadScheduler, "ilmd", 1239);
 
+                    Console.WriteLine("waiting for  enum");
                     await _bootloaderClient.WaitForEnumeration();
 
+                    Console.WriteLine("connecting interfaces");
                     await _bootloaderClient.ConnectInterfaces();
 
-                    //await _bootloaderClient.BootloaderClientNode.ConnectAsync();
+                    if (_bootloaderClient.BootloaderClientNode is { })
+                    {
+                        await _bootloaderClient.BootloaderClientNode.ConnectAsync();
+                    }
+
+
                     _isConnected = true;
                 } else
                 {
@@ -82,7 +93,7 @@ namespace GxFlash
 
             });
 
-            UpdateCommand = ReactiveCommand.Create(async ()=> 
+            UpdateCommand = ReactiveCommand.CreateFromTask(async ()=> 
             {
                 var dlg = new OpenFileDialog();
                 dlg.Title = "Select Firmware Update File";
@@ -94,13 +105,21 @@ namespace GxFlash
                 });
 
                 dlg.InitialFileName = string.Empty;
-                var result = await dlg.ShowAsync();
+                var result = await dlg.ShowAsync((Application.Current.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow);
 
                 if (result != null && result.Count() >= 1)
                 {
                     IsFlashing = true;
 
                     //TODO reset into bootloader.
+                    if (_bootloaderClient.BootloaderClientNode is null)
+                    {
+                        await _bootloaderClient.ServiceNode.StartBootloader();
+
+                        await Task.Delay(5000);
+
+                        await _bootloaderClient.ConnectBootloaderInterfaces();
+                    }
                     //await RequestConnectionState(BootloaderConnectionState.Bootloader);
 
                     //TODO wait for bootloader to connect.
@@ -187,7 +206,7 @@ namespace GxFlash
         }
 
 
-        public ReactiveCommand UpdateCommand { get; }
+        public ReactiveCommand<Unit, Unit> UpdateCommand { get; }
         
         public double Progress => 0;
         

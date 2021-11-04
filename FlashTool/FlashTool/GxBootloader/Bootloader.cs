@@ -5,7 +5,17 @@ using IdpProtocol;
 
 namespace GX
 {
-    [Guid("33E95805-EA11-4B67-B79B-2B6227DC3BAF")]
+    [Guid("182D7497-F3EE-4975-AD4D-F45686EBCB6E")]
+    public class BootloaderXServiceNode : ClientNode
+    {
+        public async Task StartBootloader()
+        {
+            var(success, response) =
+                await SendRequestAsync(OutgoingTransaction.Create(0xb501, CreateTransactionId(), IdpCommandFlags.None));
+        }
+    }
+
+    [Guid("EBBF4FFB-0F3C-4975-83D2-B6FE4643D641")]
     public class GxBootloaderNode : ClientNode
     {
         public async Task<float> GetVersion()
@@ -43,12 +53,17 @@ namespace GX
 
             var (success, response) = await SendRequestAsync(
                 OutgoingTransaction.Create((UInt16)0xB003, CreateTransactionId())
-                .Write((UInt16)data.Length)
+                .Write((byte)data.Length)
                 .Write(data));
 
             if( success && response != null && response.ResponseCode == IdpResponseCode.OK) 
             {
+                Console.WriteLine("Block written response ok");
                 result = true;
+            }
+            else
+            {
+                Console.WriteLine("Block written response bad");
             }
 
             return result;
